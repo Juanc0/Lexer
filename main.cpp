@@ -4,13 +4,13 @@
 
 using namespace std;
 
-class Token{
-private:
+class Token {
+  private:
     int row;
     int column;
     char* type;
     char* lexeme;
-public:
+  public:
     Token(int row, int column, char type[], char lexeme[]);
     void print();
 };
@@ -27,15 +27,15 @@ void Token::print(){
     cout << lexeme << endl;
 }
 
-class Lexer{
-private:
+class Lexer {
+  private:
     short numNonFinalsStates;
     short numCharacters;
     short indexFirstFinalState;
     char* availableCharacters;
     short numAvailableCharacters;
     short** dfa;
-public:
+  public:
     Lexer();
     ~Lexer();
     short getNumNonFinalsStates();
@@ -46,12 +46,13 @@ public:
     short** getDfa();
     short transition(short state, short character);
     void printDfa();
+    Token firstToken(char* str);
 };
 Lexer::Lexer(){
-    numNonFinalsStates = 14;
+    numNonFinalsStates = 16;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#<>=!&|+-abcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ.0123456789";
+    availableCharacters = "()[]{}*/%^#:,><=!&|+-.\"abcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
     numAvailableCharacters = (unsigned)strlen(availableCharacters);
     //  Initialize all matrix element with zero (0)
     dfa = new short*[numNonFinalsStates];
@@ -63,30 +64,32 @@ Lexer::Lexer(){
 
     //  Unit tokens with unique match
     //  TODO:   Take it to any character loop
-    for(short i=0; i<=9; i++)
+    for(short i=0; i<=12; i++)
         dfa[0][(short)availableCharacters[i]] = indexFirstFinalState;
-    //  Mixed tokens with multiple matches consideration
-    dfa[0][(short)'#'] = indexFirstFinalState+1;
-    dfa[0][(short)'>'] = 1;
-    dfa[0][(short)'<'] = 2;
-    dfa[0][(short)'='] = 3;
-    dfa[0][(short)'!'] = 4;
-    dfa[0][(short)'&'] = 5;
-    dfa[0][(short)'|'] = 6;
-    dfa[0][(short)'+'] = 7;
-    dfa[0][(short)'-'] = 8;
-    dfa[0][(short)'.'] = 9;
+    //  Mixed tokens with multiple matches consideration (Float number case #1: without a number before)
+    for(short i=13; i<=21; i++)
+      dfa[0][(short)availableCharacters[i]] = i-10;
 
     // Two element token match
     for(short i=1; i<=4; i++)
-        dfa[i][(short)'='] = indexFirstFinalState+2;
-    dfa[5][(short)'&'] = indexFirstFinalState+2;
-    dfa[6][(short)'|'] = indexFirstFinalState+2;
-    dfa[7][(short)'+'] = indexFirstFinalState+2;
-    dfa[8][(short)'-'] = indexFirstFinalState+2;
+        dfa[i][(short)'='] = indexFirstFinalState+1;
+    dfa[5][(short)'&'] = indexFirstFinalState+1;
+    dfa[6][(short)'|'] = indexFirstFinalState+1;
+    dfa[7][(short)'+'] = indexFirstFinalState+1;
+    dfa[8][(short)'-'] = indexFirstFinalState+1;
 
-    //  I don't know how to name it
+    //  Float number (case #2 with a number before)
     dfa[11][(short)'.'] = 12;
+
+    //  "Strings"
+    dfa[0][(short)'\"'] = 14;
+    for(short i=0; i<numCharacters; i++){
+      if(i != (short)'\"'){
+        dfa[14][i] = 15; // 14 --> 15 loop alphanumeric + ' '
+        dfa[15][i] = 15;
+      }else
+        dfa[15][i] = indexFirstFinalState+6;
+    }
 
     //  Alphabetical loop
     for(short i=65; i<=90; i++){
@@ -100,8 +103,8 @@ Lexer::Lexer(){
         dfa[0][i] = 11;
         dfa[11][i] = 11;
         dfa[10][i] = 10;
-        dfa[9][i] = 13;
-        dfa[12][i] = 13;
+        dfa[9][i] = 13; // float without a number before
+        dfa[12][i] = 13; // float with a number before
         dfa[13][i] = 13;
     }
 
@@ -110,12 +113,12 @@ Lexer::Lexer(){
     for(short j=0; j<numAvailableCharacters; j++){
         //  Unit tokens with multiple match check
         for(short i=1; i<=13; i++){
-            //  TODO:   Check this
             //  TODO: Check if [0-9]'.' map to an integer or a double number
             //  TODO: (11,12 -> 25),(12,13 -> 26)
             if(i==12) continue;
             if(dfa[i][(short)availableCharacters[j]] == 0){
-                increment = (i>=10? i-6: 3);
+                increment = (i<10? 2: i-7);
+                // increment = (i>=10? i-5: 2);
                 //  TODO:   Think about it when i==13
                 if(i==13) increment--;
                 dfa[i][(short)availableCharacters[j]] = indexFirstFinalState+increment;
@@ -124,6 +127,7 @@ Lexer::Lexer(){
     }
 }
 Lexer::~Lexer(){
+    delete availableCharacters;
     for(short i=0; i<numAvailableCharacters; i++)
         delete dfa[i];
     delete dfa;
@@ -154,12 +158,12 @@ int main()
 {
     Lexer* lexer = new Lexer();
     lexer->printDfa();
-//    short a = lexer->getNumAvailableCharacters();
-//    cout << a << endl;
-//    for(int i=0; a[i]!= ' ' ;i++){
-//        cout << "i: " << i << " character " << a[i] << " int " << (int)a[i] << " ";
-//        cout << lexer->transition(0,a[i]) << endl;
-//    }
+   short a = lexer->getNumAvailableCharacters();
+   char* b = lexer->getAvailableCharacters();
+   cout << a << endl;
+   for(int i=0; i<a; i++){
+       cout << "i: " << i << " character " << b[i] << " int " << (int)b[i] << " " << lexer->transition(0,b[i]) << endl;
+   }
     delete lexer;
     return 0;
 }
