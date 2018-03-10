@@ -31,11 +31,9 @@ void Token::print(){
 
 class Lexer {
   private:
-    long row;
-    long column;
-    long i;
-    long j;
-    // map<char*,char*> myhash();
+    // map<char*,char*>
+    short row;
+    short column;
     short numNonFinalsStates;
     short numCharacters;
     short indexFirstFinalState;
@@ -56,12 +54,8 @@ class Lexer {
     Token nextToken(char* str);
 };
 Lexer::Lexer(){
-    row = 0;
-    column = 0;
-    i = 0;
-    j = 0;
-    //  TODO: Initialize map/hashmap
-
+    this->row = 0;
+    this->column = 0;
 
     numNonFinalsStates = 16;
     numCharacters = 128;
@@ -162,68 +156,57 @@ void Lexer::printDfa(){
         printf("\n");
     }
 }
-Token Lexer::nextToken(char* str){
-  short currentState = 0;
-  while(true){  //  jkasaaasfaklsdf
-    currentState = transition(currentState, str[j])
-    switch (currentState) {
-      case 0:
-        printf("Se murió en la row %lu y column %lu\n", row, column);
-        return NULL;
-      case indexFirstFinalState:
-        printf("Unit token");
-        // revisar hash con substring(0,i); // i ==1
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
-        return token;
-        break;
-      case indexFirstFinalState+1:
-        printf("unit token check");
-        // revisar hash con substring(0,i); // i == 1
-        j--;
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
-        return token;
-        break;
-      case indexFirstFinalState+2:
-        // revisar hash con substring(0,i); // i == 2
-        printf("tow elements Token");
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
-        break;
-      case indexFirstFinalState+3:
-        break;
-      case indexFirstFinalState+4:
-        break;
-      case indexFirstFinalState+5:
-        break;
-      case indexFirstFinalState+6:
-        break;
-      case indexFirstFinalState+7:
-        column++;
-        break;
-      default:
-        j++;
-        break;
-    }
-  }
-}
+// Token Lexer::nextToken(char* str){
+//   short currentState = 0;
+//   short i = 0;
+//   while(true){  //  jkasaaasfaklsdf
+//     currentState = transition(currentState, str[i])
+//     switch (currentState) {
+//       case 0:
+//         printf("Se murió\n");
+//         return NULL;
+//       case indexFirstFinalState:
+//         printf("Unit token");
+//         // revisar hash con substring(0,i); // i ==1
+//         char* tokenType = myhash(substr(str, 0, 1));
+//         return Token token = new Token(row, column, tokenType, substr(str, 0, 1));
+//         break;
+//       case indexFirstFinalState+1:
+//         printf("two characters token");
+//         // revisar hash con substring(0,i); // i == 2
+//         char* tokenType = myhash(substr(str, 0, 2));
+//         Token token = new Token(row, column, tokenType, substr(str, 0, 1));
+//         return afdkajlkl
+//         break;
+//       case indexFirstFinalState+2:
+//         break;
+//       case indexFirstFinalState+3:
+//         break;
+//       case indexFirstFinalState+4:
+//         break;
+//       case indexFirstFinalState+5:
+//         break;
+//       case indexFirstFinalState+6:
+//         break;
+//       case indexFirstFinalState+7:
+//         column++;
+//         break;
+//       default:
+//         i++;
+//         break;
+//     }
+//   }
+// }
 
 int main(){
-    Lexer* lexer = new Lexer();
-    lexer->printDfa();
-   short a = lexer->getNumAvailableCharacters();
-   char* b = lexer->getAvailableCharacters();
-   cout << a << endl;
-   for(int i=0; i<a; i++){
-       cout << "i: " << i << " character " << b[i] << " int " << (int)b[i] << " " << lexer->transition(0,b[i]) << endl;
-   }
-    delete lexer;
-    return 0;
+  Lexer* lexer = new Lexer();
+  // lexer->printDfa();
+  short a = lexer->getNumAvailableCharacters();
+  char* b = lexer->getAvailableCharacters();
+  cout << a << endl;
+  for(int i=0; i<a; i++){
+    cout << "i: " << i << " character " << b[i] << " int " << (int)b[i] << " " << lexer->transition(0,b[i]) << endl;
+  }
+  delete lexer;
+  return 0;
 }
