@@ -61,7 +61,7 @@ Lexer::Lexer(){
     numNonFinalsStates = 16;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#:,><=!&|+-.\"\nabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
+    availableCharacters = "()[]{}*/%^#:,><=!&|+-.\" \tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
     numAvailableCharacters = (unsigned)strlen(availableCharacters);
 
     //  Initialize all matrix element with zero (0)
@@ -80,7 +80,9 @@ Lexer::Lexer(){
     //  Mixed tokens with multiple matches consideration (Float number case #1: without a number before)
     for(short i=13; i<=21; i++)
       dfa[0][(short)availableCharacters[i]] = i-10;
-    dfa[0][(short)'\n'] = indexFirstFinalState+7;
+    // dfa[0][(short)'\n'] = indexFirstFinalState+7;
+    dfa[0][(short)' '] = 0;
+    dfa[0][(short)'\t'] = 0;
 
     //  Two element token match
     for(short i=1; i<=4; i++)
@@ -89,6 +91,7 @@ Lexer::Lexer(){
     dfa[6][(short)'|'] = indexFirstFinalState+1;
     dfa[7][(short)'+'] = indexFirstFinalState+1;
     dfa[8][(short)'-'] = indexFirstFinalState+1;
+
 
     //  Float number (case #2 with a number before)
     dfa[11][(short)'.'] = 12;
