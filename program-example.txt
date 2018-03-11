@@ -1,4 +1,3 @@
-<
 log("prueba del if")
 a= false
 b = true
