@@ -1,73 +1,84 @@
 #include <iostream>
+#include <istream>
+#include <fstream>
 #include <cstdio>
-#include <cstring>//for strlen in lexer constructor
-#include <map>
-
-
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 using namespace std;
 
-class Token {
-  private:
+//  Compile with
+//  g++ -std=c++0x main.cpp -o main
+
+
+class Token{
+private:
     int row;
     int column;
-    char* type;
-    char* lexeme;
-  public:
-    Token(int row, int column, char type[], char lexeme[]);
+    string type;
+    string lexeme;
+public:
+    Token(int row, int column, string type, string lexeme);
     void print();
 };
-Token::Token(int _row, int _column, char _type[], char _lexeme[]){
+Token::Token(int _row, int _column, string _type, string _lexeme){
     row = _row;
     column = _column;
     type = _type;
     lexeme = _lexeme;
 }
 void Token::print(){
-    cout << row << endl;
-    cout << column << endl;
-    cout << type << endl;
-    cout << lexeme << endl;
+  if (type == "rw")
+    cout << "<" << type << "," << lexeme << "," << row << "," << column << ">" << endl;
+  else
+    cout << "<" << lexeme << "," << row << "," << column << ">" << endl;
 }
 
-class Lexer {
-  private:
-    long row;
-    long column;
-    long i;
-    long j;
-    // map<char*,char*> myhash();
+class Lexer{
+private:
     short numNonFinalsStates;
     short numCharacters;
     short indexFirstFinalState;
-    char* availableCharacters;
+    string availableCharacters;
     short numAvailableCharacters;
     short** dfa;
-  public:
+    long row;
+    long column;
+    string currentLine;
+    unordered_map<string, string> tokenTypes;
+    unordered_set<string> reservedWords;
+    // map<string, string> tokenTypes;
+    // map<string, string> reservedWords;
+    // istream& is;
+public:
     Lexer();
     ~Lexer();
+
     short getNumNonFinalsStates();
     short getNumCharacters();
     short getIndexFirstFinalState();
-    char* getAvailableCharacters();
+    string getAvailableCharacters();
     short getNumAvailableCharacters();
     short** getDfa();
+    long getRow();
+    long getColumn();
+    string getCurrentLine();
+    // unordered_map<string, string> getTokenTypes();
+    // unordered_set<string> getReservedWords();
+    // istream& getIs(){return is;}
+
     short transition(short state, short character);
     void printDfa();
-    Token nextToken(char* str);
+    // Token* nextToken(ifstream& ifs);
+    Token* nextToken(ifstream programfile);
 };
 Lexer::Lexer(){
-    row = 0;
-    column = 0;
-    i = 0;
-    j = 0;
-    //  TODO: Initialize map/hashmap
-
-
-    numNonFinalsStates = 16;
+    numNonFinalsStates = 15;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#:,><=!&|+-.\"\nabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
-    numAvailableCharacters = (unsigned)strlen(availableCharacters);
+    availableCharacters = "()[]{}*/%^#:;,_?><=!&|+-.\" \tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
+    // numAvailableCharacters = (unsigned)strlen(availableCharacters);
+    numAvailableCharacters = availableCharacters.length();
     //  Initialize all matrix element with zero (0)
     dfa = new short*[numNonFinalsStates];
     for(short i=0; i<numNonFinalsStates; i++){
@@ -76,35 +87,89 @@ Lexer::Lexer(){
             dfa[i][j] = 0;
     }
 
+    row = 0;
+    column = 0;
+    currentLine = "";
+    // ifstream programfile("program-example.txt");
+    // is = programfile;
+    // is = cin;
+
+    //  Initialize tokenTypes hashmap
+    tokenTypes.insert({
+      {"{","token_llave_izq"},
+      {"}","token_llave_der"},
+      {"#","token_com"},
+      {"[","token_cor_izq"},
+      {"]","token_cor_der"},
+      {"(","token_par_izq"},
+      {")","token_par_der"},
+      {">","token_mayor"},
+      {"<","token_menor"},
+      {">=","token_mayor_igual"},
+      {"<=","token_menor_igual"},
+      {"==","token_igual_num"},
+      {".","token_point"},
+      {"!=","token_dif_num"},
+      {"&&","token_and"},
+      {"||","token_or"},
+      {"!","token_not"},
+      {"+","token_mas"},
+      {"-","token_menos"},
+      {"*","token_mul"},
+      {"/","token_div"},
+      {"%","token_mod"},
+      {"^","token_pot"},
+      {"=","token_assign"},
+
+      // these are not defined in the restrepo table
+      {":","token_puntos"},
+      {";","token_punto_coma"},
+      {",","token_coma"}
+    });
+    //  Initialize reservedWords hashmap
+    reservedWords.insert({
+      {"end"},
+      {"false"},
+      {"for"},
+      {"funcion"},
+      {"if"},
+      {"importar"},
+      {"in"},
+      {"log"},
+      {"sqrt"},
+      {"true"},
+      {"retorno"},
+      {"while"},
+    });
+
+
+
     //  Unit tokens with unique match
     //  TODO:   Take it to any character loop
-    for(short i=0; i<=12; i++)
+    for(short i=0; i<=15; i++)
         dfa[0][(short)availableCharacters[i]] = indexFirstFinalState;
     //  Mixed tokens with multiple matches consideration (Float number case #1: without a number before)
-    for(short i=13; i<=21; i++)
-      dfa[0][(short)availableCharacters[i]] = i-10;
-    dfa[0][(short)'\n'] = indexFirstFinalState+7;
+    for(short i=16; i<=21; i++)
+        dfa[0][(short)availableCharacters[i]] = i-10;
+    dfa[0][(short)' '] = 0;
+    dfa[0][(short)'\t'] = 0;
 
     // Two element token match
     for(short i=1; i<=4; i++)
-        dfa[i][(short)'='] = indexFirstFinalState+1;
-    dfa[5][(short)'&'] = indexFirstFinalState+1;
-    dfa[6][(short)'|'] = indexFirstFinalState+1;
-    dfa[7][(short)'+'] = indexFirstFinalState+1;
-    dfa[8][(short)'-'] = indexFirstFinalState+1;
+        dfa[i][(short)'='] = indexFirstFinalState;
+    dfa[7][(short)'+'] = indexFirstFinalState;
+    dfa[8][(short)'-'] = indexFirstFinalState;
 
     //  Float number (case #2 with a number before)
     dfa[11][(short)'.'] = 12;
 
     //  "Strings"
     dfa[0][(short)'\"'] = 14;
-    for(short i=0; i<numCharacters; i++){
-      if(i != (short)'\"'){
-        dfa[14][i] = 15; // 14 --> 15 loop alphanumeric + ' '
-        dfa[15][i] = 15;
-      }else
-        dfa[15][i] = indexFirstFinalState+6;
-    }
+    for(short i=0; i<numCharacters; i++)
+        if(i != (short)'\"')
+            dfa[14][i] = 14; // 14 --> 14 loop alphanumeric + ' '
+        else
+            dfa[14][i] = indexFirstFinalState+5;
 
     //  Alphabetical loop
     for(short i=65; i<=90; i++){
@@ -130,100 +195,149 @@ Lexer::Lexer(){
         for(short i=1; i<=13; i++){
             //  TODO: Check if [0-9]'.' map to an integer or a double number
             //  TODO: (11,12 -> 25),(12,13 -> 26)
-            if(i==12) continue;
+            if(i==12)continue;
             if(dfa[i][(short)availableCharacters[j]] == 0){
-                increment = (i<10? 2: i-7);
+                increment = (i<10? 1: i-8);
                 // increment = (i>=10? i-5: 2);
                 //  TODO:   Think about it when i==13
-                if(i==13) increment--;
+                if(i==13)
+                    increment--;
                 dfa[i][(short)availableCharacters[j]] = indexFirstFinalState+increment;
             }
         }
     }
 }
 Lexer::~Lexer(){
-    delete availableCharacters;
-    for(short i=0; i<numAvailableCharacters; i++)
+    for(short i=0; i<numNonFinalsStates; i++)
         delete dfa[i];
     delete dfa;
 }
-short Lexer::getNumNonFinalsStates(){ return numNonFinalsStates; }
-short Lexer::getNumCharacters(){ return numCharacters; }
-short Lexer::getIndexFirstFinalState(){ return indexFirstFinalState; }
-char* Lexer::getAvailableCharacters(){ return availableCharacters; }
-short Lexer::getNumAvailableCharacters(){ return numAvailableCharacters; }
-short** Lexer::getDfa(){ return dfa; }
-short Lexer::transition(short state, short character){ return dfa[state][character]; }
+short Lexer::getNumNonFinalsStates(){return numNonFinalsStates;}
+short Lexer::getNumCharacters(){return numCharacters;}
+short Lexer::getIndexFirstFinalState(){return indexFirstFinalState;}
+string Lexer::getAvailableCharacters(){return availableCharacters;}
+short Lexer::getNumAvailableCharacters(){return numAvailableCharacters;}
+short** Lexer::getDfa(){return dfa;}
+
+long Lexer::getRow(){return row;}
+long Lexer::getColumn(){return column;}
+string Lexer::getCurrentLine(){return currentLine;}
+// unordered_map<string, string> Lexer::getTokenTypes(){return tokentypes;}
+// unordered_set<string> Lexer::getReservedWords(){return reservedWords;}
+short Lexer::transition(short state, short character){return dfa[state][character];}
 void Lexer::printDfa(){
     for(int i=0; i<numNonFinalsStates; i++){
         for(int j=10; j< numCharacters; j++){
-            printf("%2i ",dfa[i][j]);// if(!((j+1)%10)) printf("\t");
+            printf("%2i ",dfa[i][j]);
+            // if(!((j+1)%10)) printf("\t");
         }
         printf("\n");
     }
 }
-Token Lexer::nextToken(char* str){
+// Token* Lexer::nextToken(ifstream& ifs){
+Token* Lexer::nextToken(ifstream programfile){
+  // ifstream programfile("program-example.txt");
+  //  CurrentLine ckeck
+
+  if(column == currentLine.length()){
+    getline(programfile, currentLine);
+    row++;
+    column = 0;
+  }
+
+  //  find next token
   short currentState = 0;
-  while(true){  //  jkasaaasfaklsdf
-    currentState = transition(currentState, str[j])
+  short i = 0;
+  string tokenType;
+  string lexeme;
+  while(true){
+    currentState = transition(currentState, (short)currentLine[column+i]);
     switch (currentState) {
       case 0:
-        printf("Se murió en la row %lu y column %lu\n", row, column);
+        printf("Character not available row %lu y column   %lu\n", row, column);
+        printf("Character not available row %lu y column+i %lu\n", row, column+i);
         return NULL;
-      case indexFirstFinalState:
-        printf("Unit token");
-        // revisar hash con substring(0,i); // i ==1
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
-        return token;
+      case 24:
+        //  Float number
+        tokenType = "token_float";
         break;
-      case indexFirstFinalState+1:
-        printf("unit token check");
-        // revisar hash con substring(0,i); // i == 1
-        j--;
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
-        return token;
+      case 23:
+        //  integer
+        tokenType = "token_integer";
         break;
-      case indexFirstFinalState+2:
-        // revisar hash con substring(0,i); // i == 2
-        printf("tow elements Token");
-        char* tokenType = myhash(substr(str, i, j));
-        Token token = new Token(row, column, tokenType, substr(str, i, j));
-        token.printToken();
-        i=j;
+      case 22:
+        //  identifiers <id, nombre, row, col>
+        lexeme = currentLine.substr(column, i+1);
+        tokenType = !lexeme.compare("in")? "token_in" : (
+          reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id"
+        );
         break;
-      case indexFirstFinalState+3:
+      case 21:
+        //  tokens with an additional character
+        i--;
+      case 20:
+        //  complete tokens (with one and two characters)
+        lexeme = currentLine.substr(column, i+1);
+        tokenType = tokenTypes[lexeme];
+        // tokenType = tokenTypes.find(lexeme);
+
+        if(i == 0 && currentLine[column-1] == '#'){
+          Token* token = new Token(row, column, tokenType, lexeme);
+          getline(programfile, currentLine);
+          row++;
+          column = 0;
+          i=0;
+          continue;
+        }
+
+        i++;
         break;
-      case indexFirstFinalState+4:
-        break;
-      case indexFirstFinalState+5:
-        break;
-      case indexFirstFinalState+6:
-        break;
-      case indexFirstFinalState+7:
-        column++;
+      case 25:
+        //  String
+        tokenType = "token_string";
+        i++;
         break;
       default:
-        j++;
-        break;
+        i++;
+        continue;
     }
+    i--;
+    lexeme = currentLine.substr(column, i+1);
+    if(currentState == indexFirstFinalState+5)
+      lexeme = currentLine.substr(column+1, i);
+
+    Token* token = new Token(row, column, tokenType, lexeme);
+    column += i+1;
+    currentState = 0;
+    return token;
   }
 }
 
 int main(){
+    ifstream programfile("program-example.txt");
     Lexer* lexer = new Lexer();
-    lexer->printDfa();
-   short a = lexer->getNumAvailableCharacters();
-   char* b = lexer->getAvailableCharacters();
-   cout << a << endl;
-   for(int i=0; i<a; i++){
-       cout << "i: " << i << " character " << b[i] << " int " << (int)b[i] << " " << lexer->transition(0,b[i]) << endl;
-   }
+    short a = lexer->getNumAvailableCharacters();
+    cout << a << endl;
+    string b = lexer->getAvailableCharacters();
+    cout << b << endl;
+    // ifstream programfile("program-example.txt");
+    // cout << "sadf";
+    // lexer.nextToken(programfile).print();
+    // programfile.close();
+    Token* token;
+    while((token = lexer->nextToken(programfile)) != NULL){
+      token->print();
+    }
+
+    // for(int i=0; i<25; i++){
+    //   cout << "character '" << b.substr(i,1) << "' hash function result (" << lexer->tokensTypeHashFunction(b.substr(i,1)) << ")" << endl;
+    // }
+    // string aux = "<=>===!=&&||++--";
+    // for(int i=0; i<25; i+=2){
+    //   cout << "character '" << b.substr(i,2) << "' hash function result (" << lexer->tokensTypeHashFunction(b.substr(i,2)) << ")" << endl;
+    // }
+
+    programfile.close();
     delete lexer;
     return 0;
 }
