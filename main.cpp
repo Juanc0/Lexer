@@ -270,7 +270,7 @@ Token* Lexer::nextToken(istream &programfile){
     // cout << currentState << "\t" << currentLine[column+i] << "\t" << (int)currentLine[column+i] << endl;
     switch (currentState) {
       case 0:
-        cout << ">>> Error lexico(linea:" << row << ",posicion:" << column << ")" << endl;
+        cout << ">>> Error lexico(linea:" << row << ",posicion:" << column+1 << ")" << endl;
         return NULL;
       case 24:
         //  Float number

@@ -1,8 +1,1 @@
-log("prueba del if")
-a= false
-b = true
-if a && b {
-  log ("El resultado es verdadero")
-}
-# ignorar comentario
-log("El valor es falso")
+!=$
