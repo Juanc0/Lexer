@@ -30,12 +30,16 @@ Token::Token(int _row, int _column, string _type, string _lexeme){
     lexeme = _lexeme;
 }
 void Token::print(){
-  if (type == "rw")
-    cout << "<" << lexeme << "," << row << "," << column << ">" << endl;
-  else if (type == "token_string" || type == "token_integer" || type == "token_float" || type == "id")
-    cout << "<" << type << "," << lexeme << "," << row << "," << column << ">" << endl;
-  else
-    cout << "<" << type << "," << row << "," << column << ">" << endl;
+  cout << "<";
+  if(type != "rw")
+    cout << type << ",";
+  if(type == "rw"
+    || type == "token_string"
+    || type == "token_integer"
+    || type == "token_float"
+    || type == "id")
+    cout << lexeme << ",";
+  cout << row << "," << column << ">" << endl;
 }
 string Token::getType(){return type;}
 
@@ -68,13 +72,13 @@ class Lexer{
 
     short transition(short state, short character);
     void printDfa();
-    Token* nextToken(istream &programfile);
+    Token* nextToken(istream &input);
 };
 Lexer::Lexer(){
     numNonFinalsStates = 15;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#:;,_><=!&|+-.\"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
+    availableCharacters = "()[]{}*/%^#:;,_><=!&|+-.~\"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
     numAvailableCharacters = availableCharacters.length();
     //  Initialize all matrix element with zero (0)
     dfa = new short*[numNonFinalsStates];
@@ -87,8 +91,8 @@ Lexer::Lexer(){
     row = 0;
     column = 0;
     currentLine = "";
-    // ifstream programfile("program-example.txt");
-    // is = programfile;
+    // ifstream input("program-example.txt");
+    // is = input;
     // is = cin;
 
     //  Initialize tokenTypes hashmap
@@ -126,7 +130,7 @@ Lexer::Lexer(){
       {",","token_coma"},
       {"_","token_guion_bajo"}
     });
-    //  Initialize reservedWords hashmap
+    //  Initialize reservedWords hashset
     reservedWords.insert({
       {"end"},
       {"false"},
@@ -136,24 +140,26 @@ Lexer::Lexer(){
       {"importar"},
       {"in"},
       {"log"},
-      //{"sqrt"},
       {"true"},
       {"retorno"},
       {"while"},
-      {"nill"},
+      {"nil"},
       {"desde"},
       {"todo"},
+      {"else"},
     });
 
 
 
     //  Unit tokens with unique match
     //  TODO:   Take it to any character loop
-    for(short i=0; i<=14; i++)
+    for(short i=0; i<=14; i++){
+        // cout << availableCharacters[i] << (short)availableCharacters[i] << endl;
         dfa[0][(short)availableCharacters[i]] = indexFirstFinalState;
+    }
     //  Mixed tokens with multiple matches consideration (Float number case #1: without a number before)
     for(short i=15; i<=22; i++)
-        dfa[0][(short)availableCharacters[i]] = i-15;
+        dfa[0][(short)availableCharacters[i]] = i-14;
     //  TODO: check this error -1 or 0
     dfa[0][(short)' '] = indexFirstFinalState+6;
     dfa[0][(short)'\t'] = indexFirstFinalState+6;
@@ -180,9 +186,6 @@ Lexer::Lexer(){
         else
             dfa[14][i] = indexFirstFinalState+5;
 
-    cout << (short)'¨';
-    cout << dfa[14][(short)'¨'];
-
     //  Alphabetical loop
     for(short i=65; i<=90; i++){
         dfa[0][i] = 10;
@@ -199,8 +202,8 @@ Lexer::Lexer(){
         dfa[12][i] = 13; // float with a number before
         dfa[13][i] = 13;
     }
-    dfa[10][(short)'_'] = 15;
-    dfa[10][(short)'-'] = 15;
+    // dfa[10][(short)'_'] = 15;
+    // dfa[10][(short)'-'] = 15;
 
     //  Any character loop
     short increment;
@@ -263,20 +266,14 @@ void Lexer::printDfa(){
     }
 }
 // Token* Lexer::nextToken(ifstream& ifs){
-Token* Lexer::nextToken(istream &programfile){
-  // ifstream programfile("program-example.txt");
+Token* Lexer::nextToken(istream &input){
   //  CurrentLine ckeck
   if(column == currentLine.length()){
-    if(programfile.eof()) return NULL;
-    getline(programfile, currentLine);
+    if(input.eof()) return NULL;
+    getline(input, currentLine);
     row++;
     column = 0;
   }
-  //else if(programfile.eof()) {
-    // cout << "end of line, column: " << column ;
-     //return NULL;
-  //}
-  //cout << currentLine << endl;
 
 
   //  find next token
@@ -285,9 +282,9 @@ Token* Lexer::nextToken(istream &programfile){
   string tokenType;
   string lexeme;
   while(true){
-    if(currentLine[column+i] == '¨') currentState = 14;
+    // cout << currentState;
     currentState = transition(currentState, (short)currentLine[column+i]);
-    // cout << currentState << "\t" << currentLine[column+i] << "\t" << (int)currentLine[column+i] << endl;
+    // cout << "\t" << currentLine[column+i] << "\t" << (int)currentLine[column+i] << "\t" << currentState<< endl;
 
     switch (currentState) {
       case 0:
@@ -318,10 +315,10 @@ Token* Lexer::nextToken(istream &programfile){
         // tokenType = tokenTypes.find(lexeme);
 
         if(currentLine[column] == '#'){
-          if(programfile.eof())
+          if(input.eof())
             return NULL;
           Token* token = new Token(row, column+1, tokenType, lexeme);
-          getline(programfile, currentLine);
+          getline(input, currentLine);
           row++;
           column = 0;
           i=0;
@@ -352,15 +349,13 @@ Token* Lexer::nextToken(istream &programfile){
     Token* token = new Token(row, column+1, tokenType, lexeme);
     column += i+1;
     currentState = 0;
-    if(lexeme == "")
-        return nextToken(programfile);
-    //return lexeme==""? NULL: token;
+    if(lexeme == "")return nextToken(input);
     return token;
   }
 }
 
 int main(){
-    // ifstream programfile("program-example.txt");
+    // ifstream input("program-example.txt");
     Lexer* lexer = new Lexer();
 
 
@@ -369,7 +364,7 @@ int main(){
       token->print();
     }
 
-    // programfile.close();
+    // input.close();
     delete lexer;
     return 0;
 }
