@@ -1,1 +1,8 @@
-!=$
+log("prueba del if")
+a= false
+b = true
+if a && b {
+  log("Elresultado es verdadero")
+}
+# ignorar token_comentario
+log("El valor es falso")
