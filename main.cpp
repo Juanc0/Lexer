@@ -74,7 +74,7 @@ Lexer::Lexer(){
     numNonFinalsStates = 15;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#:;,_?><=!&|+-.\"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
+    availableCharacters = "()[]{}*/%^#:;,_><=!&|+-.\"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
     numAvailableCharacters = availableCharacters.length();
     //  Initialize all matrix element with zero (0)
     dfa = new short*[numNonFinalsStates];
@@ -106,7 +106,7 @@ Lexer::Lexer(){
       {"<=","token_menor_igual"},
       {"==","token_igual_num"},
       {".","token_point"},
-      {"!=","token_dif_num"},
+      {"!=","token_diff_num"},
       {"&&","token_and"},
       {"||","token_or"},
       {"!","token_not"},
@@ -121,7 +121,7 @@ Lexer::Lexer(){
       {"=","token_assign"},
 
       // these are not defined in the restrepo table
-      {":","token_puntos"},
+      {":","token_dosp"},
       {";","token_punto_coma"},
       {",","token_coma"},
       {"_","token_guion_bajo"}
@@ -136,24 +136,28 @@ Lexer::Lexer(){
       {"importar"},
       {"in"},
       {"log"},
-      {"sqrt"},
+      //{"sqrt"},
       {"true"},
       {"retorno"},
       {"while"},
+      {"nill"},
+      {"desde"},
+      {"todo"},
     });
 
 
 
     //  Unit tokens with unique match
     //  TODO:   Take it to any character loop
-    for(short i=0; i<=15; i++)
+    for(short i=0; i<=14; i++)
         dfa[0][(short)availableCharacters[i]] = indexFirstFinalState;
     //  Mixed tokens with multiple matches consideration (Float number case #1: without a number before)
-    for(short i=16; i<=23; i++)
+    for(short i=15; i<=22; i++)
         dfa[0][(short)availableCharacters[i]] = i-15;
     //  TODO: check this error -1 or 0
     dfa[0][(short)' '] = indexFirstFinalState+6;
     dfa[0][(short)'\t'] = indexFirstFinalState+6;
+    dfa[0][(short)'.'] = 9;
 
     // Two element token match
     for(short i=1; i<=4; i++)
@@ -162,6 +166,8 @@ Lexer::Lexer(){
     dfa[6][(short)'|'] = indexFirstFinalState;
     dfa[7][(short)'+'] = indexFirstFinalState;
     dfa[8][(short)'-'] = indexFirstFinalState;
+
+
 
     //  Float number (case #2 with a number before)
     dfa[11][(short)'.'] = 12;
@@ -173,6 +179,9 @@ Lexer::Lexer(){
             dfa[14][i] = 14; // 14 --> 14 loop alphanumeric + ' '
         else
             dfa[14][i] = indexFirstFinalState+5;
+
+    cout << (short)'¨';
+    cout << dfa[14][(short)'¨'];
 
     //  Alphabetical loop
     for(short i=65; i<=90; i++){
@@ -186,7 +195,7 @@ Lexer::Lexer(){
         dfa[0][i] = 11;
         dfa[11][i] = 11;
         dfa[10][i] = 10;
-        dfa[9][i] = 13; // float without a number before
+        //dfa[9][i] = 13; // float without a number before
         dfa[12][i] = 13; // float with a number before
         dfa[13][i] = 13;
     }
@@ -209,8 +218,12 @@ Lexer::Lexer(){
                 dfa[i][(short)availableCharacters[j]] = indexFirstFinalState+increment;
             }
         }
+        if(dfa[14][(short)availableCharacters[j]] == 0){
+            dfa[14][(short)availableCharacters[j]] = indexFirstFinalState+5;
+        }
 
     }
+
 
     for(int i=0; i<numNonFinalsStates; i++){
       if(i==12 || i==5 || i== 6)continue;
@@ -229,6 +242,7 @@ Lexer::Lexer(){
           increment--;
       dfa[i][(short)' '] = indexFirstFinalState+increment;
     }
+    dfa[14][0] = 0;
 }
 Lexer::~Lexer(){
     for(short i=0; i<numNonFinalsStates; i++)
@@ -252,13 +266,18 @@ void Lexer::printDfa(){
 Token* Lexer::nextToken(istream &programfile){
   // ifstream programfile("program-example.txt");
   //  CurrentLine ckeck
-  if(programfile.eof())
-    return NULL;
   if(column == currentLine.length()){
+    if(programfile.eof()) return NULL;
     getline(programfile, currentLine);
     row++;
     column = 0;
   }
+  //else if(programfile.eof()) {
+    // cout << "end of line, column: " << column ;
+     //return NULL;
+  //}
+  //cout << currentLine << endl;
+
 
   //  find next token
   short currentState = 0;
@@ -266,8 +285,10 @@ Token* Lexer::nextToken(istream &programfile){
   string tokenType;
   string lexeme;
   while(true){
+    if(currentLine[column+i] == '¨') currentState = 14;
     currentState = transition(currentState, (short)currentLine[column+i]);
     // cout << currentState << "\t" << currentLine[column+i] << "\t" << (int)currentLine[column+i] << endl;
+
     switch (currentState) {
       case 0:
         cout << ">>> Error lexico(linea:" << row << ",posicion:" << column+1 << ")" << endl;
@@ -283,9 +304,9 @@ Token* Lexer::nextToken(istream &programfile){
       case 22:
         //  identifiers <id, nombre, row, col>
         lexeme = currentLine.substr(column, i);
-        tokenType = !lexeme.compare("in")? "token_in" : (
-          reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id"
-        );
+        //tokenType = !lexeme.compare("in")? "token_in" : (
+          tokenType = reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id";
+        //);
         break;
       case 21:
         //  tokens with an additional character
@@ -331,28 +352,26 @@ Token* Lexer::nextToken(istream &programfile){
     Token* token = new Token(row, column+1, tokenType, lexeme);
     column += i+1;
     currentState = 0;
-    return lexeme==""? NULL: token;
+    if(lexeme == "")
+        return nextToken(programfile);
+    //return lexeme==""? NULL: token;
+    return token;
   }
 }
 
 int main(){
-    ifstream programfile("program-example.txt");
+    // ifstream programfile("program-example.txt");
     Lexer* lexer = new Lexer();
 
-    // short a = lexer->getNumAvailableCharacters();
-    // cout << a << endl;
-    // string b = lexer->getAvailableCharacters();
-    // cout << b << endl;
 
     Token* token;
-    while((token = lexer->nextToken(programfile)) != NULL){
+    while((token = lexer->nextToken(cin)) != NULL){
       token->print();
     }
-    // for (int i = 0; i < 50; i++) {
-    //   lexer->nextToken(programfile)->print();
-    // }
 
-    programfile.close();
+    // programfile.close();
     delete lexer;
     return 0;
 }
+
+// Yeliana Torres y Juan Pablo Ovalle
