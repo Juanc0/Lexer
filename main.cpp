@@ -78,7 +78,7 @@ Lexer::Lexer(){
     numNonFinalsStates = 15;
     numCharacters = 128;
     indexFirstFinalState = 20;
-    availableCharacters = "()[]{}*/%^#:;,_><=!&|+-.~\"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
+    availableCharacters = "()[]{}*/%^#:;,_><=!&|+-.~ \"\n\tabcdefghijklmniopqrstuvwxyzABCDEFGHIJKLMNIOPQRSTUVWXYZ0123456789";
     numAvailableCharacters = availableCharacters.length();
     //  Initialize all matrix element with zero (0)
     dfa = new short*[numNonFinalsStates];
@@ -202,8 +202,9 @@ Lexer::Lexer(){
         dfa[12][i] = 13; // float with a number before
         dfa[13][i] = 13;
     }
-    // dfa[10][(short)'_'] = 15;
-    // dfa[10][(short)'-'] = 15;
+    //  Identifiers with '-' or '_' characters
+    dfa[10][(short)'_'] = indexFirstFinalState+2;
+    dfa[10][(short)'-'] = indexFirstFinalState+2;
 
     //  Any character loop
     short increment;
@@ -211,40 +212,30 @@ Lexer::Lexer(){
         //  Unit tokens with multiple match check
         for(short i=1; i<=13; i++){
             //  TODO: Check if [0-9]'.' map to an integer or a double number or error
+            // cout << i << "\t" << j << "\t" << (short)availableCharacters[j] << "\t" << availableCharacters[j] << "\t" << dfa[i][(short)availableCharacters[j]] << endl;
             if(i==12 || i==5 || i== 6)continue;
             if(dfa[i][(short)availableCharacters[j]] == 0){
                 increment = (i<10? 1: i-8);
                 // increment = (i>=10? i-5: 2);
                 //  TODO:   Think about it when i==13
-                if(i==13)
-                    increment--;
+                if(i==13)increment--;
                 dfa[i][(short)availableCharacters[j]] = indexFirstFinalState+increment;
             }
         }
-        if(dfa[14][(short)availableCharacters[j]] == 0){
+        if(dfa[14][(short)availableCharacters[j]] == 0)
             dfa[14][(short)availableCharacters[j]] = indexFirstFinalState+5;
-        }
 
     }
 
-
+    //  I'm not sure what this does
     for(int i=0; i<numNonFinalsStates; i++){
       if(i==12 || i==5 || i== 6)continue;
       if(dfa[i][0] == 0)
         increment = (i<10? 1: i-8);
-      if(i==13)
-          increment--;
+      if(i==13)increment--;
       dfa[i][0] = indexFirstFinalState+increment;
     }
-
-    for(int i=1; i<13; i++){
-      if(i==12 || i==5 || i== 6)continue;
-      if(dfa[i][(short)' '] == 0)
-        increment = (i<10? 1: i-8);
-      if(i==13)
-          increment--;
-      dfa[i][(short)' '] = indexFirstFinalState+increment;
-    }
+    //  Throw a lexical error for non-closed strings
     dfa[14][0] = 0;
 }
 Lexer::~Lexer(){
