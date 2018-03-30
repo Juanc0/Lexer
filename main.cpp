@@ -297,9 +297,11 @@ Token* Lexer::nextToken(){
       case 22:
         //  identifiers <id, nombre, row, col>
         lexeme = currentLine.substr(column, i);
-        //tokenType = !lexeme.compare("in")? "token_in" : (
-          tokenType = reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id";
-        //);
+        tokenType =
+        // lexeme == "in"? "token_in" : (
+          reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id"
+        //)
+        ;
         break;
       case 21:
         //  tokens with an additional character
