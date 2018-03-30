@@ -56,8 +56,10 @@ class Lexer{
     string currentLine;
     unordered_map<string, string> tokenTypes;
     unordered_set<string> reservedWords;
+    bool useFile;
+    ifstream ifs;
   public:
-    Lexer();
+    Lexer(bool useFile, string str);
     ~Lexer();
 
     short getNumNonFinalsStates();
@@ -74,7 +76,10 @@ class Lexer{
     void printDfa();
     Token* nextToken(istream &input);
 };
-Lexer::Lexer(){
+Lexer::Lexer(bool _useFile, string str)
+  : ifs(str){
+    useFile = _useFile;
+
     numNonFinalsStates = 15;
     numCharacters = 128;
     indexFirstFinalState = 20;
@@ -257,11 +262,11 @@ void Lexer::printDfa(){
     }
 }
 // Token* Lexer::nextToken(ifstream& ifs){
-Token* Lexer::nextToken(istream &input){
+Token* Lexer::nextToken(){
   //  CurrentLine ckeck
   if(column == currentLine.length()){
     if(input.eof()) return NULL;
-    getline(input, currentLine);
+    getline(useFile?input:cin, currentLine);
     row++;
     column = 0;
   }
@@ -309,7 +314,7 @@ Token* Lexer::nextToken(istream &input){
           if(input.eof())
             return NULL;
           Token* token = new Token(row, column+1, tokenType, lexeme);
-          getline(input, currentLine);
+          getline(useFile?input:cin, currentLine);
           row++;
           column = 0;
           i=0;
@@ -340,18 +345,18 @@ Token* Lexer::nextToken(istream &input){
     Token* token = new Token(row, column+1, tokenType, lexeme);
     column += i+1;
     currentState = 0;
-    if(lexeme == "")return nextToken(input);
+    if(lexeme == "")return nextToken();
     return token;
   }
 }
 
 int main(){
     // ifstream input("program-example.txt");
-    Lexer* lexer = new Lexer();
+    Lexer* lexer = new Lexer(true, "program-example.txt");
 
 
     Token* token;
-    while((token = lexer->nextToken(cin)) != NULL){
+    while((token = lexer->nextToken()) != NULL){
       token->print();
     }
 
