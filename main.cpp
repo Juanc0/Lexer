@@ -13,12 +13,12 @@ using namespace std;
 
 
 class Token{
-private:
+	private:
     int row;
     int column;
     string type;
     string lexeme;
-public:
+	public:
     Token(int row, int column, string type, string lexeme);
     string getType();
     void print();
@@ -30,6 +30,7 @@ Token::Token(int _row, int _column, string _type, string _lexeme){
     lexeme = _lexeme;
 }
 void Token::print(){
+	if(lexeme == "\n")return;
   cout << "<";
   if(type != "rw")
     cout << type << ",";
@@ -74,7 +75,7 @@ class Lexer{
 
     short transition(short state, short character);
     void printDfa();
-    Token* nextToken(istream &input);
+    Token* nextToken();
 };
 Lexer::Lexer(bool _useFile, string str)
   : ifs(str){
@@ -96,9 +97,6 @@ Lexer::Lexer(bool _useFile, string str)
     row = 0;
     column = 0;
     currentLine = "";
-    // ifstream input("program-example.txt");
-    // is = input;
-    // is = cin;
 
     //  Initialize tokenTypes hashmap
     tokenTypes.insert({
@@ -244,9 +242,10 @@ Lexer::Lexer(bool _useFile, string str)
     dfa[14][0] = 0;
 }
 Lexer::~Lexer(){
-    for(short i=0; i<numNonFinalsStates; i++)
-        delete dfa[i];
-    delete dfa;
+	ifs.close();
+  for(short i=0; i<numNonFinalsStates; i++)
+    delete dfa[i];
+  delete dfa;
 }
 string Lexer::getAvailableCharacters(){return availableCharacters;}
 // unordered_map<string, string> Lexer::getTokenTypes(){return tokentypes;}
@@ -263,13 +262,22 @@ void Lexer::printDfa(){
 }
 // Token* Lexer::nextToken(ifstream& ifs){
 Token* Lexer::nextToken(){
+
+	istream& input = useFile?ifs:cin;
   //  CurrentLine ckeck
-  if(column == currentLine.length()){
-    if(input.eof()) return NULL;
-    getline(useFile?input:cin, currentLine);
+	if(row == 0 && column == 0){
+    getline(input, currentLine);
+    row = 1;
+    column = 0;
+	}if(column == currentLine.length()){
+		column++;
+		return new Token(row, column, "token_salto_linea", "\n");
+	}else if(column == currentLine.length()+1){
+		if(input.eof()) return NULL;
+    getline(input, currentLine);
     row++;
     column = 0;
-  }
+	}
 
 
   //  find next token
@@ -313,10 +321,10 @@ Token* Lexer::nextToken(){
         // tokenType = tokenTypes.find(lexeme);
 
         if(currentLine[column] == '#'){
-          if(input.eof())
-            return NULL;
+          if(input.eof())	return NULL;
+
           Token* token = new Token(row, column+1, tokenType, lexeme);
-          getline(useFile?input:cin, currentLine);
+          getline(input, currentLine);
           row++;
           column = 0;
           i=0;
@@ -353,16 +361,12 @@ Token* Lexer::nextToken(){
 }
 
 int main(){
-    // ifstream input("program-example.txt");
     Lexer* lexer = new Lexer(true, "program-example.txt");
-
 
     Token* token;
     while((token = lexer->nextToken()) != NULL){
       token->print();
     }
-
-    // input.close();
     delete lexer;
     return 0;
 }
