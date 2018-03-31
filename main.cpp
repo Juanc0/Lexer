@@ -30,7 +30,7 @@ Token::Token(int _row, int _column, string _type, string _lexeme){
     lexeme = _lexeme;
 }
 void Token::print(){
-	if(lexeme == "\n")return;
+	// if(lexeme == "\n")return;
   cout << "<";
   if(type != "rw")
     cout << type << ",";
@@ -135,21 +135,22 @@ Lexer::Lexer(bool _useFile, string str)
     });
     //  Initialize reservedWords hashset
     reservedWords.insert({
-      {"end"},
-      {"false"},
-      {"for"},
-      {"funcion"},
-      {"if"},
       {"importar"},
+			{"funcion"},
+      {"end"},
+      {"true"},
+      {"false"},
+      {"if"},
+      {"else"},
+			{"while"},
+      {"for"},
       {"in"},
       {"log"},
-      {"true"},
-      {"retorno"},
-      {"while"},
+      {"leer"},
       {"nil"},
       {"desde"},
       {"todo"},
-      {"else"},
+			{"retorno"},
     });
 
 
@@ -265,10 +266,10 @@ Token* Lexer::nextToken(){
 
 	istream& input = useFile?ifs:cin;
   //  CurrentLine ckeck
-	if(row == 0 && column == 0){
+	if(row == 0){
+		// if(input.eof()) return NULL;
     getline(input, currentLine);
     row = 1;
-    column = 0;
 	}if(column == currentLine.length()){
 		column++;
 		return new Token(row, column, "token_salto_linea", "\n");
@@ -305,11 +306,7 @@ Token* Lexer::nextToken(){
       case 22:
         //  identifiers <id, nombre, row, col>
         lexeme = currentLine.substr(column, i);
-        tokenType =
-        // lexeme == "in"? "token_in" : (
-          reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id"
-        //)
-        ;
+        tokenType = lexeme == reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id";
         break;
       case 21:
         //  tokens with an additional character
@@ -361,7 +358,7 @@ Token* Lexer::nextToken(){
 }
 
 int main(){
-    Lexer* lexer = new Lexer(true, "program-example.txt");
+    Lexer* lexer = new Lexer(false, "program-example.txt");
 
     Token* token;
     while((token = lexer->nextToken()) != NULL){
