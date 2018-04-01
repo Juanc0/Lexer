@@ -18,7 +18,8 @@ class Grammar{
 		~Grammar();
 		void print();
 		bool isVariable(string str);
-		bool isTerminal(string str){
+		bool isTerminal(string str);
+		vector<string> first(string str);
 		void generateFirst();
 };
 Grammar::Grammar(string ifname, string ofname)
@@ -67,11 +68,6 @@ void Grammar::print(){
 		cout << endl;
 	}
 }
-// bool Grammar::isVariable(string str){
-// 	for(int i=0; i<variables.size(); i++)
-// 		if(variables[i] == str)return true;
-// 	return false;
-// }
 bool Grammar::isVariable(string str){
 	if(str[0] == '\'' && str[str.length()-1] == '\'')return false;
 	return true;
@@ -80,13 +76,19 @@ bool Grammar::isTerminal(string str){
 	if(str[0] == '\'' && str[str.length()-1] == '\'')return true;
 	return false;
 }
-void Grammar::generateFirst(){
-	for(int i=0; i<variables.size(); i++){
+vector<string> Grammar::first(string str){
+	for(int i=0; i<variables.size(); i++){		
 		for(int j=0; j<rules[i].size(); j++){
 			for(int k=0; k<rules[i][j].size(); k++){
-
+				if(isTerminal(rules[i][j][k]))
+					cout << "yea" << endl;
 			}
 		}
+	}
+}
+void Grammar::generateFirst(){
+	for(int i=0; i<variables.size(); i++){
+		first.push_back(first(variables[i]));
 	}
 }
 
