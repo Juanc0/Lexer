@@ -118,9 +118,9 @@ Lexer::Lexer(bool _useFile, string str)
       {"||","token_or"},
       {"!","token_not"},
       {"+","token_mas"},
-      {"++","token_add"},
+      // {"++","token_add"},
       {"-","token_menos"},
-      {"--","token_less"},
+      // {"--","token_less"},
       {"*","token_mul"},
       {"/","token_div"},
       {"%","token_mod"},
@@ -135,6 +135,7 @@ Lexer::Lexer(bool _useFile, string str)
     });
     //  Initialize reservedWords hashset
     reservedWords.insert({
+			{"desde"},
       {"importar"},
 			{"funcion"},
       {"end"},
@@ -148,9 +149,8 @@ Lexer::Lexer(bool _useFile, string str)
       {"log"},
       {"leer"},
       {"nil"},
-      {"desde"},
-      {"todo"},
 			{"retorno"},
+			{"todo"},
     });
 
 
