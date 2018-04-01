@@ -1,5 +1,5 @@
-if				:				'if' condition statements else
+if				:				'if' condition statements else | algo 'noseque' enter | nada n 'carajo'
 
 /* asdfasdf */
 
-ifasdf		:				'if' condition statements else
+ifasdf		:				'if' condition else
