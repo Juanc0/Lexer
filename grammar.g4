@@ -48,12 +48,12 @@ importar2				:  	'.' importar1 | 'epsilon'
 functioncall		:		'id' '(' cparameters ')'
 cparameters		  :		cparameters1 | 'epsilon'
 cparameters1		:		element2 cparameters2
-cparameters2		:		' ' cparameters1 | 'epsilon'
+cparameters2		:		',' cparameters1 | 'epsilon'
 
 function				:		'funcion' 'id' '(' parameters ')' functionstm 'end' 'funcion'
 parameters			:		parameters1 | 'epsilon'
 parameters1			:		'id' parameters2
-parameters2			:		' ' parameters1 | 'epsilon'
+parameters2			:		',' parameters1 | 'epsilon'
 
 functionstm		  :		enter statements2 functionstm1
 functionstm1		:		'retorno' returnstm enter functionstm | 'epsilon'
@@ -65,7 +65,7 @@ negation				:		'!' element1
 assignment			:		'id' '=' element2
 array						:		'[' array2 ']'
 array2					:		element2 array3
-array3					:		' ' array2 | 'epsilon'
+array3					:		',' array2 | 'epsilon'
 
 number  				:		'token_integer' | 'token_float'
 boolean					:		'true' | 'false'

@@ -1,105 +1,49 @@
-program					:		n statements2 n
-statements			:		n '{' n statements2 n '}' enter
-                    | enter statement enter
-statements2 		:		statement statements3
-                    | 'epsilon'
-statements3			:		enter statements2
-                    | 'epsilon'
-statement				:		element
-                    | routine
-element					:		element2
-                    | assignment
-element1				:		number
-                    | boolean
-                    | 'id'
-                    | negation
-                    | functioncall
-                    | genoperation
-element2				:		element1
-                    | 'token_string'
-                    | array
-                    | espoperation
-                    | 'nil'
-routine					:		_if
-                    | _while
-                    | _for
-                    | function
-                    | log
-                    | leer
-                    | importar
-genoperation		:		genoperation1
-                    | '(' genoperation1 ')'
-genoperation1	  :		element1 genoperator element1
-                    | element2 fulloperator element2
-fulloperator    :   '=='
-                    | '!='
-                    | '&&'
-                    | ' || '
-genoperator		  :		'+'
-                    | '-'
-                    | '*'
-                    | '/'
-                    | '^'
-                    | '<'
-                    | '>'
-                    | '>='
-                    | '<='
-espoperation		:		espoperator espoperation1
-                    | '(' espoperator espoperation1 ')'
-espoperation1	  :		'+' espoperation2
-                    | '*' element1
-espoperation2	  :		espoperator
-                    | 'id'
-espoperator		  :		'token_string'
-                    | array
-_for						:		'for' 'id' 'in' forparam statements
-forparam				:		espoperator
-                    | espoperation
-                    | 'id'
-                    | functioncall
-_while					:		'while' condition statements
-_if							:		'if' condition statements _else
-_else						:		'else' statements
-                    | 'epsilon'
-condition				:		element2
-                    | '(' ')'
-                    | condition1
-condition1			:		'(' condition ')'
-                    | 'epsilon'
-log							:		'log' '(' element2 ')'
-leer						:		'leer' '(' 'id' ')'
-importar				: 	'importar' importar1
-                    | 'desde' importar1 'importar' 'id'
-importar1				:  	'id' importar2
-importar2				:  	'.' importar1
-                    | 'epsilon'
-functioncall		:		'id' '(' cparameters ')'
-cparameters		  :		cparameters1
-                    | 'epsilon'
-cparameters1		:		element2 cparameters2
-cparameters2		:		',' cparameters1
-                    | 'epsilon'
-function				:		'funcion' 'id' '(' parameters ')' functionstm 'end' 'funcion'
-parameters			:		parameters1
-                    | 'epsilon'
-parameters1			:		'id' parameters2
-parameters2			:		',' parameters1
-                    | 'epsilon'
-functionstm		  :		enter statements2 functionstm1
-functionstm1		:		'retorno' returnstm enter functionstm
-                    | 'epsilon'
-returnstm			  :		element2
-                    | 'epsilon'
-negation				:		'!' element1
-assignment			:		'id' '=' element2
-array						:		'[' array2 ']'
-array2					:		element2 array3
-array3					:		',' array2
-                    | 'epsilon'
-number  				:		'token_integer'
-                    | 'token_float'
-boolean					:		'true'
-                    | 'false'
-enter						:		'/n' n
-n								:		enter
-                    | 'epsilon'
+program					:		/n token_integer token_float true false id ! token_string array [ ( nil if while for funcion log leer importar desde epsilon
+statements			:	  /n {
+statements2 		:		token_integer token_float true false id ! token_string array [ ( nil if while for funcion log leer importar desde epsilon
+statements3			:		/n epsilon
+statement				:		token_integer token_float true false id ! token_string array [ ( nil if while for funcion log leer importar desde
+element					:		token_integer token_float true false id ! token_string array [ ( nil
+element1				:		token_integer token_float true false id ! token_string array [ ( nil
+element2				:		token_integer token_float true false id ! token_string array [ ( nil
+routine					:		if while for funcion log leer importar desde
+genoperation		:		token_integer token_float true false id ! token_string array [ ( nil
+genoperation1	  :		token_integer token_float true false id ! token_string array [ ( nil
+fulloperator    :   == != && ||
+genoperator		  :		+ - * / ^ < > >= <=
+espoperation		:		token_string [ (
+espoperation1	  :		+ *
+espoperation2	  :		token_string [ id
+espoperator		  :		token_string [
+_for						:		for
+forparam				:		token_string [ ( id
+_while					:		while
+_if							:		if
+_else						:		else epsilon
+condition				:		token_integer token_float true false id ! token_string array [ ( nil epsilon
+condition1			:		( epsilon
+log							:		log
+leer						:		leer
+importar				: 	importar desde
+importar1				:  	id
+importar2				:  	. epsilon
+functioncall		:		id
+cparameters		  :		token_integer token_float true false id ! token_string array [ ( nil epsilon
+cparameters1		:		token_integer token_float true false id ! token_string array [ ( nil
+cparameters2		:		, epsilon
+function				:		funcion
+parameters			:		id epsilon
+parameters1			:		id
+parameters2			:		, epsilon
+functionstm		  :		/n
+functionstm1		:		retorno
+returnstm			  :		token_integer token_float true false id ! token_string array [ ( nil epsilon
+negation				:		!
+assignment			:		id
+array						:		[
+array2					:		token_integer token_float true false id ! token_string array [ ( nil
+array3					:		, epsilon
+number  				:		token_integer token_float
+boolean					:		true false
+enter						:		/n
+n								:		epsilon /n
