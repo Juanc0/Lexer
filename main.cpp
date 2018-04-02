@@ -306,7 +306,7 @@ Token* Lexer::nextToken(){
       case 22:
         //  identifiers <id, nombre, row, col>
         lexeme = currentLine.substr(column, i);
-        tokenType = lexeme == reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id";
+        tokenType = reservedWords.find(lexeme) != reservedWords.end()? "rw" : "id";
         break;
       case 21:
         //  tokens with an additional character
