@@ -32,8 +32,8 @@ forparam				:		espoperator | espoperation | 'id' | functioncall
 _while					:		'while' condition statements
 _if							:		'if' condition statements _else
 _else						:		'else' statements | 'epsilon'
-condition				:		element2 | '(' ')' | condition1
-condition1			:		'(' condition ')' | 'epsilon'
+condition				:		element2 | '(' condition1 ')'
+condition1			:		condition | 'epsilon'
 
 /* log, leer and importar */
 

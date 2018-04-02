@@ -20,8 +20,8 @@ forparam				:		token_string [ ( id
 _while					:		while
 _if							:		if
 _else						:		else epsilon
-condition				:		token_integer token_float true false id ! token_string array [ ( nil epsilon
-condition1			:		( epsilon
+condition				:		token_integer token_float true false id ! token_string array [ ( nil
+condition1			:		token_integer token_float true false id ! token_string array [ ( nil epsilon
 log							:		log
 leer						:		leer
 importar				: 	importar desde

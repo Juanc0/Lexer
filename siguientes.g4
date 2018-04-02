@@ -21,7 +21,7 @@ _while					:		/n end } retorno $
 _if							:		/n end } retorno $
 _else						:		/n end } retorno $
 condition				:		/n { )
-condition1			:		/n { )
+condition1			:		)
 log							:		/n end } retorno $
 leer						:		/n end } retorno $
 importar				: 	/n end } retorno $
