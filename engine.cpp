@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 // #include <ofstream>
 
 //  Compile with
@@ -17,6 +18,7 @@ class Grammar{
 		vector<vector<vector<string> > > pred;
 		vector<vector<string> > first;
     unordered_map<string, string> tokenTypes;
+		unordered_set<string> nonTerminals;
 		ifstream ifs;
 		ifstream ifspred;
 		ofstream ofs;
@@ -47,6 +49,8 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 		vector<vector<string> > aux1;
 		i = line.find('\t');
 		variables.push_back(line.substr(0, i));
+		nonTerminals.insert(line.substr(0, i));
+		// cout << line.substr(0, i) << " " << (nonTerminals.find(line.substr(0, i)) != nonTerminals.end()) << endl;
 		i = line.find(':')+1;
 		while(line[i]=='\t' || line[i]==' ')i++;
 		line = line.substr(i);
@@ -84,17 +88,23 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 		line = line.substr(i);
 
 		while(line != ""){
+			// cout << "line " << line << endl;
 			vector<string> aux2;
 			i = line.find('|');
-			if(i>0 && line[i-1]=='\''){
+			// cout << "i " << i << endl;
+			if(i>0 && line[i+1]=='|'){
 				int j = i;
 				string lineaux3 = line.substr(i+2);
+				// cout << "lineaux3 (" << lineaux3 << ")" << endl;
 				i = lineaux3.find('|');
 				if(i!=-1)
 					i += (j + 2);
 			}
 			lineaux = i==-1?line:line.substr(0, i-1);
 			line = i==-1?"":line.substr(i+2);
+			// cout << "lineaux " << lineaux << endl;
+
+			// cout << "line2 " << line << endl;
 
 			while(lineaux != ""){
 				i = lineaux.find(' ');
@@ -107,16 +117,18 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 		pred.push_back(aux1);
 	}
 
-	// for(int i=0; i<variables.size(); i++){
-	// 	cout << "[" << variables[i] << "]";
-	// 	for(int k=0; k<pred[i].size(); k++){
-	// 		cout << "{";
-	// 		for(int j=0; j<pred[i][k].size(); j++)
-	// 			cout << "<" << pred[i][k][j] << ">";
-	// 		cout << "}";
-	// 	}
-	// 	cout << endl;
-	// }
+	// printRules();
+
+	for(int i=0; i<variables.size(); i++){
+		cout << "[" << variables[i] << "]";
+		for(int k=0; k<pred[i].size(); k++){
+			cout << "{";
+			for(int j=0; j<pred[i][k].size(); j++)
+				cout << "<" << pred[i][k][j] << ">";
+			cout << "}";
+		}
+		cout << endl;
+	}
 
 	// while(getline(ifspred, line)){
 	// 	vector<string> aux;
@@ -348,27 +360,36 @@ void Grammar::generateSyntactic(){
 	ofs << "}\n";
 
 	string lexeme, comp;
-	bool tokenExist;
+	bool tokenExist, isNonTerminal;
 	for(int i=0; i<variables.size(); i++){
 		ofs << "void Syntactic::" << variables[i] << "(){\n\t";
 		for(int j=0; j<pred[i].size(); j++){
 			ofs << "if(";
 			for(int k=0; k<pred[i][j].size(); k++){
 				lexeme = pred[i][j][k];
+
 				tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 				comp = tokenExist? tokenTypes[lexeme] : lexeme;
-				ofs << "currentTokenType == " << comp;
+				// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
+				ofs << "currentTokenType == \"" << comp << "\"";
 				if(k<pred[i][j].size()-1)
 					ofs << " || ";
 			}
 			ofs << "){\n";
 			for(int k=0; k<rules[i][j].size(); k++){
-				ofs << "\t\tgatito\n";
-
-				if(rules[i][j][k][0] == '\'')
-					ofs << "match();\n";
-				else
-					ofs << rules[i][j][k] << "();\n";
+				lexeme = rules[i][j][k];
+				isNonTerminal = nonTerminals.find(lexeme) != nonTerminals.end();
+				// cout <<  lexeme << "\t" << isNonTerminal << endl;
+				if(isNonTerminal)
+					ofs << "\t\t" << lexeme << "();\n";
+				else{
+					if(lexeme[0] == '\'')
+						lexeme = lexeme.substr(1, lexeme.length()-2);
+					tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
+					comp = tokenExist? tokenTypes[lexeme] : lexeme;
+					cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
+					ofs << "\t\tmatch(\"" << comp << "\");\n";
+				}
 			}
 			ofs << "\t}";
 			if(j<pred[i].size()-1)
