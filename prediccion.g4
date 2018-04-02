@@ -9,6 +9,7 @@ statement				:   token_integer token_float true false id ! token_string array [ 
                 |   if while for funcion log leer importar desde
 element					:   token_integer token_float true false id ! token_string array [ ( nil
                 |   id
+/* Hay un error aqui: se repite id en la prediccion de element */
 element1				:   token_integer token_float
                 |   true false
                 |   id
@@ -29,6 +30,7 @@ routine					:   if while for funcion log leer importar desde
                 |   importar desde
 genoperation		:   token_string [ (
                 |   (
+/* Hay un error aqui: se repite todo en la prediccion de genoperation1 */
 genoperation1	  :   token_integer token_float true false id ! token_string array [ ( nil
                 |   token_integer token_float true false id ! token_string array [ ( nil
 fulloperator    :   ==
@@ -53,6 +55,7 @@ espoperation2	  :   token_string [
 espoperator		  :   token_string
                 |   [
 _for						:   for
+/* Hay un error aqui: se repite id en la prediccion de forparam */
 forparam				:   token_string [
                 |   token_string [ (
                 |   id
