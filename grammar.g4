@@ -17,7 +17,7 @@ routine					:		_if | _while | _for | function | log | leer | importar
 
 genoperation		:		genoperation1 | '(' genoperation1 ')'
 genoperation1	  :		element1 genoperator element1 | element2 fulloperator element2
-fulloperator    :   '==' | '!=' | '&&' | ' |  | '
+fulloperator    :   '==' | '!=' | '&&' | ' || '
 genoperator		  :		'+' | '-' | '*' | '/' | '^' | '<' | '>' | '>=' | '<='
 
 espoperation		:		espoperator espoperation1 | '(' espoperator espoperation1 ')'
