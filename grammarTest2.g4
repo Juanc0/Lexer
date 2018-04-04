@@ -1,84 +1,37 @@
-from_input : stat NEWLINE
+from_input : stat '\n'
 A : stat A | EPSILON
-B : NEWLINE B | EPSILON
+B : '\n' B | EPSILON
 stat : simple_stat | compound_stat
 compound_stat : if_stat | while_stat | for_stat | funcion
-simple_stat : assignment | log | IMPORTAR | retornar | atom NEWLINE
-assignment : variable ASSIGN assignment1
-assignment1 : assignment| expr
-if_stat : IF condition_block C
-C : ELSE stat_block | EPSILON
-while_stat : WHILE expr stat_block
-for_stat : FOR ID IN expr stat_block
-log : LOG OPAR expr CPAR
-funcion : FUNCION ID OPAR E CPAR Z END
+simple_stat : assignment | log | importar | retornar | atom '\n'
+assignment : variable '=' assignment1
+assignment1 : assignment | expr
+if_stat : 'if' condition_block C
+C : 'else' stat_block | EPSILON
+while_stat : 'while' expr stat_block
+for_stat : 'for' 'id' 'in' expr stat_block
+log : 'log' '(' expr ')'
+funcion : 'funcion' 'id' '(' E ')' Z 'end' 'funcion'
 Z : B | A
 E : parametro F | EPSILON
-F : COMMA parametro F | EPSILON
-IMPORTAR : IMPORT ID K| FROM ID IMPORT ID
-K : POINT ID K | EPSILON
-retornar : RETORNO OPAR expr CPAR NEWLINE
+F : ',' parametro F | EPSILON
+importar : 'importar' 'id' K| 'desde' 'id' 'importar' 'id'
+K : '.' 'id' K | EPSILON
+retornar : 'retorno' '(' expr ')' '\n'
 condition_block : expr condition_block1 stat_block
-condition_block1 : NEWLINE | EPSILON
-stat_block : OBRACE Z CBRACE | stat NEWLINE
-array : OKEY G CKEY
+condition_block1 : '\n' | EPSILON
+stat_block : '{' Z '}' | stat '\n'
+array : '[' G ']'
 G : expr H | EPSILON
-H : COMMA expr H | EPSILON
-variable : ID K variable1
+H : ',' expr H | EPSILON
+variable : 'id' K variable1
 variable1 : J | EPSILON
-J : OPAR G CPAR | EPSILON
-parametro : ID parametro1
-parametro1 : ASSIGN expr | EPSILON
-expr : N expr | NOT expr | OPAR expr CPAR | atom
-N : POW | MULT | DIV | MOD | PLUS | MINUS | LTEQ | GTEQ | LT | GT | EQ | NEQ | AND | OR
-atom : INT | FLOAT | TRUE | FALSE | STRING | array | variable | NIL
+J : '(' G ')' | EPSILON
+parametro : 'id' parametro1
+parametro1 : '=' expr | EPSILON
+expr : N expr | '!' expr | '(' expr ')' | atom
+N : '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | '||'
+atom : 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil'
 L : Keyvalue M | EPSILON
-M : COMMA keyvalue M | EPSILON
-Keyvalue : ID POINTS expr
-
-OR : '||'
-AND : '&&'
-EQ : '=='
-NEQ : '!='
-GT : '>'
-LT : '<'
-GTEQ : '>='
-LTEQ : '<='
-PLUS : '+'
-MINUS : '-'
-MULT : '*'
-DIV : '/'
-MOD : '%'
-POW : '^'
-NOT : '!'
-ASSIGN : '='
-OPAR : '('
-CPAR : ')'
-OBRACE : '{'
-CBRACE : '}'
-OKEY : '['
-CKEY : ']'
-COMMA : ','
-POINTS : ':'
-
-TRUE : 'true'
-FALSE : 'false'
-NIL : 'nil'
-IF : 'if'
-ELSE : 'else'
-WHILE : 'while'
-LOG : 'log'
-FOR : 'for'
-IN : 'in'
-FUNCION : 'funcion'
-END : 'end'
-RETORNO : 'retorno'
-IMPORT : 'importar'
-FROM : 'desde'
-POINT : '.'
-
-ID : 'id'
-INT : 'token_integer'
-FLOAT : 'token_float'
-STRING : 'token_string'
-NEWLINE : '\n'
+M : ',' keyvalue M | EPSILON
+Keyvalue : 'id' POINTS expr
