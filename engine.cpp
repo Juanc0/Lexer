@@ -75,10 +75,10 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 
 		// cout << "line (" << line << ")\n";
 		i = line.find('\t');
-		lineRules = line.substr(0,i);
+		lineRules = line.substr(3,i-3);
 		linePred = line.substr(i+1);
-		// cout << "lineRules (" << lineRules << ")\n";
-		// cout << "linePred (" << linePred << ")\n";
+		cout << "lineRules (" << lineRules << ")\n";
+		cout << "linePred (" << linePred << ")\n";
 
 
 
@@ -438,16 +438,19 @@ void Grammar::generateSyntactic(){
 	ofs << "Syntactic::Syntactic(bool useFile, string str){\n";
 	ofs << "\tlexer = new Lexer(useFile, str);\n";
 	ofs << "\tcurrentToken = lexer->nextToken();\n";
+	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
-	ofs << "\tprogram();\n";
+	ofs << "\tstats();\n";
 	// ofs << "\tcurrentToken = lexer->nextToken();\n";
 	ofs << "}\n";
 	ofs << "Syntactic::~Syntactic(){\n";
 	ofs << "\tdelete lexer;\n";
 	ofs << "}\n";
 	ofs << "void Syntactic::match(string waitedToken){\n";
+	ofs << "\t\tcout << \"match f waitedToken \" << waitedToken << endl;\n";
 	ofs << "\tif(currentTokenType == waitedToken){\n";
 	ofs << "\t\tcurrentToken = lexer->nextToken();\n";
+	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t}else{\n";
 	ofs << "\t\tstring array[] = {waitedToken};\n";
@@ -471,6 +474,7 @@ void Grammar::generateSyntactic(){
 		// cout << "\ni" << i << endl;
 		// cout << "index2 debug" << endl;
 		ofs << "void Syntactic::" << variables[i] << "(){\n\t";
+		ofs << "\tcout << \"funcion " << variables[i] << " currentToken \" << currentToken << endl;\n\t";
 		// cout << "void Syntactic::" << variables[i] << "(){\n\t";
 		for(int j=0; j<rules[i].size(); j++){
 			// cout << "========== j " << j << " ====== rules[i].size() " << rules[i].size() << "===== pred[i].size() " << pred[i].size() << endl;
