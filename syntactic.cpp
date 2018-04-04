@@ -1,8 +1,8 @@
 class Syntactic{
 	public:
 		Lexer* lexer;
-		static Token currentToken;
-		static string currentTokenType;
+		Token currentToken;
+		string currentTokenType;
 		Syntactic();
 		~Syntactic();
 };
@@ -12,442 +12,445 @@ Syntactic::Syntactic(bool useFile, string str){
 Syntactic::~Syntactic(bool useFile, string str){
 	delete lexer;
 }
-void program(){
-	if(currentTokenType == n || currentTokenType == statement2 || currentTokenType == n){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::match(Token waitedToken){
+	;
+}
+void Syntactic::program(){
+	if(currentTokenType == "n" || currentTokenType == "statements2" || currentTokenType == "n"){
+		n();
+		statements2();
+		n();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void statements(){
-	if(currentTokenType == n || currentTokenType == '{' || currentTokenType == n || currentTokenType == statment2 || currentTokenType == n || currentTokenType == '}' || currentTokenType == enter){
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == enter || currentTokenType == statement || currentTokenType == enter){
-		gatito
-		gatito
-		gatito
+void Syntactic::statements(){
+	if(currentTokenType == "n" || currentTokenType == "token_llave_izq" || currentTokenType == "n" || currentTokenType == "statements2" || currentTokenType == "n" || currentTokenType == "token_llave_der" || currentTokenType == "enter"){
+		n();
+		match("token_llave_izq");
+		n();
+		statements2();
+		n();
+		match("token_llave_der");
+		enter();
+	}	else if(currentTokenType == "enter" || currentTokenType == "statement" || currentTokenType == "enter"){
+		enter();
+		statement();
+		enter();
 	}
 }
-void statements2 (){
-	if(currentTokenType == statement || currentTokenType == statements3){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::statements2(){
+	if(currentTokenType == "statement" || currentTokenType == "statements3"){
+		statement();
+		statements3();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void statements3(){
-	if(currentTokenType == enter || currentTokenType == statements2){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::statements3(){
+	if(currentTokenType == "enter" || currentTokenType == "statements2"){
+		enter();
+		statements2();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void statement(){
-	if(currentTokenType == element){
-		gatito
-	}	else if(currentTokenType == routine){
-		gatito
+void Syntactic::statement(){
+	if(currentTokenType == "element"){
+		element();
+	}	else if(currentTokenType == "routine"){
+		routine();
 	}
 }
-void element(){
-	if(currentTokenType == element2){
-		gatito
-	}	else if(currentTokenType == assignment){
-		gatito
+void Syntactic::element(){
+	if(currentTokenType == "element2"){
+		element2();
+	}	else if(currentTokenType == "assignment"){
+		assignment();
 	}
 }
-void element1(){
-	if(currentTokenType == number){
-		gatito
-	}	else if(currentTokenType == boolean){
-		gatito
-	}	else if(currentTokenType == identifier){
-		gatito
-	}	else if(currentTokenType == negation){
-		gatito
-	}	else if(currentTokenType == function_call){
-		gatito
-	}	else if(currentTokenType == gen_operation){
-		gatito
+void Syntactic::element1(){
+	if(currentTokenType == "number"){
+		number();
+	}	else if(currentTokenType == "boolean"){
+		boolean();
+	}	else if(currentTokenType == "identifier"){
+		match("identifier");
+	}	else if(currentTokenType == "negation"){
+		negation();
+	}	else if(currentTokenType == "function_call"){
+		function_call();
+	}	else if(currentTokenType == "gen_operation"){
+		gen_operation();
 	}
 }
-void element2(){
-	if(currentTokenType == element1){
-		gatito
-	}	else if(currentTokenType == string){
-		gatito
-	}	else if(currentTokenType == array){
-		gatito
-	}	else if(currentTokenType == esp_operation){
-		gatito
-	}	else if(currentTokenType == 'nil'){
-		gatito
+void Syntactic::element2(){
+	if(currentTokenType == "element1"){
+		element1();
+	}	else if(currentTokenType == "string"){
+		match("string");
+	}	else if(currentTokenType == "array"){
+		array();
+	}	else if(currentTokenType == "esp_operation"){
+		esp_operation();
+	}	else if(currentTokenType == "nil"){
+		match("nil");
 	}
 }
-void routine(){
-	if(currentTokenType == if){
-		gatito
-	}	else if(currentTokenType == while){
-		gatito
-	}	else if(currentTokenType == for){
-		gatito
-	}	else if(currentTokenType == function){
-		gatito
-	}	else if(currentTokenType == log){
-		gatito
-	}	else if(currentTokenType == leer){
-		gatito
-	}	else if(currentTokenType == importar){
-		gatito
+void Syntactic::routine(){
+	if(currentTokenType == "if"){
+		if();
+	}	else if(currentTokenType == "while"){
+		while();
+	}	else if(currentTokenType == "for"){
+		for();
+	}	else if(currentTokenType == "function"){
+		function();
+	}	else if(currentTokenType == "log"){
+		log();
+	}	else if(currentTokenType == "leer"){
+		leer();
+	}	else if(currentTokenType == "importar"){
+		importar();
 	}
 }
-void gen_operation(){
-	if(currentTokenType == gen_operation1){
-		gatito
-	}	else if(currentTokenType == '(' || currentTokenType == gen_operation1 || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
+void Syntactic::gen_operation(){
+	if(currentTokenType == "gen_operation1"){
+		gen_operation1();
+	}	else if(currentTokenType == "token_par_izq" || currentTokenType == "gen_operation1" || currentTokenType == "token_par_der"){
+		match("token_par_izq");
+		gen_operation1();
+		match("token_par_der");
 	}
 }
-void gen_operation1(){
-	if(currentTokenType == element1 || currentTokenType == gen_operator || currentTokenType == element1){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == element || currentTokenType == '==' || currentTokenType == element){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == element || currentTokenType == '!=' || currentTokenType == element){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == element || currentTokenType == '&&' || currentTokenType == element){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == element || currentTokenType == '||' || currentTokenType == element){
-		gatito
-		gatito
-		gatito
+void Syntactic::gen_operation1(){
+	if(currentTokenType == "element1" || currentTokenType == "gen_operator" || currentTokenType == "element1"){
+		element1();
+		gen_operator();
+		element1();
+	}	else if(currentTokenType == "element" || currentTokenType == "token_igual_num" || currentTokenType == "element"){
+		element();
+		match("token_igual_num");
+		element();
+	}	else if(currentTokenType == "element" || currentTokenType == "token_diff_num" || currentTokenType == "element"){
+		element();
+		match("token_diff_num");
+		element();
+	}	else if(currentTokenType == "element" || currentTokenType == "token_and" || currentTokenType == "element"){
+		element();
+		match("token_and");
+		element();
+	}	else if(currentTokenType == "element" || currentTokenType == "token_or" || currentTokenType == "element"){
+		element();
+		match("token_or");
+		element();
 	}
 }
-void gen_operator(){
-	if(currentTokenType == '+'){
-		gatito
-	}	else if(currentTokenType == '-'){
-		gatito
-	}	else if(currentTokenType == '*'){
-		gatito
-	}	else if(currentTokenType == '/'){
-		gatito
-	}	else if(currentTokenType == '^'){
-		gatito
-	}	else if(currentTokenType == '<'){
-		gatito
-	}	else if(currentTokenType == '>'){
-		gatito
-	}	else if(currentTokenType == '>='){
-		gatito
-	}	else if(currentTokenType == '<='){
-		gatito
+void Syntactic::gen_operator(){
+	if(currentTokenType == "token_mas"){
+		match("token_mas");
+	}	else if(currentTokenType == "token_menos"){
+		match("token_menos");
+	}	else if(currentTokenType == "token_mul"){
+		match("token_mul");
+	}	else if(currentTokenType == "token_div"){
+		match("token_div");
+	}	else if(currentTokenType == "token_pot"){
+		match("token_pot");
+	}	else if(currentTokenType == "token_menor"){
+		match("token_menor");
+	}	else if(currentTokenType == "token_mayor"){
+		match("token_mayor");
+	}	else if(currentTokenType == "token_mayor_igual"){
+		match("token_mayor_igual");
+	}	else if(currentTokenType == "token_menor_igual"){
+		match("token_menor_igual");
 	}
 }
-void esp_operation(){
-	if(currentTokenType == esp_operator || currentTokenType == esp_operation1){
-		gatito
-		gatito
-	}	else if(currentTokenType == '(' || currentTokenType == esp_operator || currentTokenType == esp_operation1 || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::esp_operation(){
+	if(currentTokenType == "esp_operator" || currentTokenType == "esp_operation1"){
+		esp_operator();
+		esp_operation1();
+	}	else if(currentTokenType == "token_par_izq" || currentTokenType == "esp_operator" || currentTokenType == "esp_operation1" || currentTokenType == "token_par_der"){
+		match("token_par_izq");
+		esp_operator();
+		esp_operation1();
+		match("token_par_der");
 	}
 }
-void esp_operation1(){
-	if(currentTokenType == '+' || currentTokenType == esp_operation2){
-		gatito
-		gatito
-	}	else if(currentTokenType == '*' || currentTokenType == element1){
-		gatito
-		gatito
+void Syntactic::esp_operation1(){
+	if(currentTokenType == "token_mas" || currentTokenType == "esp_operation2"){
+		match("token_mas");
+		esp_operation2();
+	}	else if(currentTokenType == "token_mul" || currentTokenType == "element1"){
+		match("token_mul");
+		element1();
 	}
 }
-void esp_operation2(){
-	if(currentTokenType == esp_operator){
-		gatito
-	}	else if(currentTokenType == identifier){
-		gatito
+void Syntactic::esp_operation2(){
+	if(currentTokenType == "esp_operator"){
+		esp_operator();
+	}	else if(currentTokenType == "identifier"){
+		match("identifier");
 	}
 }
-void esp_operator(){
-	if(currentTokenType == string){
-		gatito
-	}	else if(currentTokenType == array){
-		gatito
+void Syntactic::esp_operator(){
+	if(currentTokenType == "string"){
+		match("string");
+	}	else if(currentTokenType == "array"){
+		array();
 	}
 }
-void for(){
-	if(currentTokenType == 'for' || currentTokenType == identifier || currentTokenType == 'in' || currentTokenType == for_param || currentTokenType == statements){
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::for(){
+	if(currentTokenType == "for" || currentTokenType == "identifier" || currentTokenType == "in" || currentTokenType == "for_param" || currentTokenType == "statements"){
+		match("for");
+		match("identifier");
+		match("in");
+		for_param();
+		statements();
 	}
 }
-void for_param(){
-	if(currentTokenType == esp_operator){
-		gatito
-	}	else if(currentTokenType == esp_operation){
-		gatito
-	}	else if(currentTokenType == identifier){
-		gatito
-	}	else if(currentTokenType == function_call){
-		gatito
+void Syntactic::for_param(){
+	if(currentTokenType == "esp_operator"){
+		esp_operator();
+	}	else if(currentTokenType == "esp_operation"){
+		esp_operation();
+	}	else if(currentTokenType == "identifier"){
+		match("identifier");
+	}	else if(currentTokenType == "function_call"){
+		function_call();
 	}
 }
-void while(){
-	if(currentTokenType == 'while' || currentTokenType == condition || currentTokenType == statements){
-		gatito
-		gatito
-		gatito
+void Syntactic::while(){
+	if(currentTokenType == "while" || currentTokenType == "condition" || currentTokenType == "statements"){
+		match("while");
+		condition();
+		statements();
 	}
 }
-void if(){
-	if(currentTokenType == 'if' || currentTokenType == condition || currentTokenType == statements || currentTokenType == else){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::if(){
+	if(currentTokenType == "if" || currentTokenType == "condition" || currentTokenType == "statements" || currentTokenType == "else"){
+		match("if");
+		condition();
+		statements();
+		else();
 	}
 }
-void else(){
-	if(currentTokenType == 'else' || currentTokenType == statements){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::else(){
+	if(currentTokenType == "else" || currentTokenType == "statements"){
+		match("else");
+		statements();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void condition(){
-	if(currentTokenType == element2){
-		gatito
-	}	else if(currentTokenType == '(' || currentTokenType == ')'){
-		gatito
-		gatito
+void Syntactic::condition(){
+	if(currentTokenType == "element2"){
+		element2();
+	}	else if(currentTokenType == "token_par_izq" || currentTokenType == "token_par_der"){
+		match("token_par_izq");
+		match("token_par_der");
 	}
 }
-void condition1(){
-	if(currentTokenType == '(' || currentTokenType == condition || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::condition1(){
+	if(currentTokenType == "token_par_izq" || currentTokenType == "condition" || currentTokenType == "token_par_der"){
+		match("token_par_izq");
+		condition();
+		match("token_par_der");
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void log(){
-	if(currentTokenType == log || currentTokenType == '(' || currentTokenType == element2 || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::log(){
+	if(currentTokenType == "log" || currentTokenType == "token_par_izq" || currentTokenType == "element2" || currentTokenType == "token_par_der"){
+		log();
+		match("token_par_izq");
+		element2();
+		match("token_par_der");
 	}
 }
-void leer(){
-	if(currentTokenType == leer || currentTokenType == '(' || currentTokenType == identifier || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::leer(){
+	if(currentTokenType == "leer" || currentTokenType == "token_par_izq" || currentTokenType == "identifier" || currentTokenType == "token_par_der"){
+		leer();
+		match("token_par_izq");
+		match("identifier");
+		match("token_par_der");
 	}
 }
-void importar(){
-	if(currentTokenType == 'importar' || currentTokenType == importar1){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'desde' || currentTokenType == importar1 || currentTokenType == 'importar' || currentTokenType == identifier){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::importar(){
+	if(currentTokenType == "importar" || currentTokenType == "importar1"){
+		match("importar");
+		importar1();
+	}	else if(currentTokenType == "desde" || currentTokenType == "importar1" || currentTokenType == "importar" || currentTokenType == "identifier"){
+		match("desde");
+		importar1();
+		match("importar");
+		match("identifier");
 	}
 }
-void importar1(){
-	if(currentTokenType == identifier || currentTokenType == importar2){
-		gatito
-		gatito
+void Syntactic::importar1(){
+	if(currentTokenType == "identifier" || currentTokenType == "importar2"){
+		match("identifier");
+		importar2();
 	}
 }
-void importar2(){
-	if(currentTokenType == '.' || currentTokenType == importar1){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::importar2(){
+	if(currentTokenType == "token_point" || currentTokenType == "importar1"){
+		match("token_point");
+		importar1();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void function_call(){
-	if(currentTokenType == identifier || currentTokenType == '(' || currentTokenType == c_parameters || currentTokenType == ')'){
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::function_call(){
+	if(currentTokenType == "identifier" || currentTokenType == "token_par_izq" || currentTokenType == "c_parameters" || currentTokenType == "token_par_der"){
+		match("identifier");
+		match("token_par_izq");
+		c_parameters();
+		match("token_par_der");
 	}
 }
-void c_parameters(){
-	if(currentTokenType == c_parameters1){
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::c_parameters(){
+	if(currentTokenType == "c_parameters1"){
+		c_parameters1();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void c_parameters1(){
-	if(currentTokenType == element || currentTokenType == c_parameters2){
-		gatito
-		gatito
+void Syntactic::c_parameters1(){
+	if(currentTokenType == "element" || currentTokenType == "c_parameters2"){
+		element();
+		c_parameters2();
 	}
 }
-void c_parameters2(){
-	if(currentTokenType == ',' || currentTokenType == c_parameters1){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::c_parameters2(){
+	if(currentTokenType == "token_coma" || currentTokenType == "c_parameters1"){
+		match("token_coma");
+		c_parameters1();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void function(){
-	if(currentTokenType == 'funcion' || currentTokenType == identifier || currentTokenType == '(' || currentTokenType == parameters || currentTokenType == ')' || currentTokenType == function_stm || currentTokenType == 'end' || currentTokenType == 'funcion'){
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
-		gatito
+void Syntactic::function(){
+	if(currentTokenType == "funcion" || currentTokenType == "identifier" || currentTokenType == "token_par_izq" || currentTokenType == "parameters" || currentTokenType == "token_par_der" || currentTokenType == "function_stm" || currentTokenType == "end" || currentTokenType == "funcion"){
+		match("funcion");
+		match("identifier");
+		match("token_par_izq");
+		parameters();
+		match("token_par_der");
+		function_stm();
+		match("end");
+		match("funcion");
 	}
 }
-void parameters(){
-	if(currentTokenType == parameters1){
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::parameters(){
+	if(currentTokenType == "parameters1"){
+		parameters1();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void parameters1(){
-	if(currentTokenType == identifier || currentTokenType == parameters2){
-		gatito
-		gatito
+void Syntactic::parameters1(){
+	if(currentTokenType == "identifier" || currentTokenType == "parameters2"){
+		match("identifier");
+		parameters2();
 	}
 }
-void parameters2(){
-	if(currentTokenType == ',' || currentTokenType == parameters1){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::parameters2(){
+	if(currentTokenType == "token_coma" || currentTokenType == "parameters1"){
+		match("token_coma");
+		parameters1();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void function_stm(){
-	if(currentTokenType == enter || currentTokenType == statements2 || currentTokenType == function_stm1){
-		gatito
-		gatito
-		gatito
+void Syntactic::function_stm(){
+	if(currentTokenType == "enter" || currentTokenType == "statements2" || currentTokenType == "function_stm1"){
+		enter();
+		statements2();
+		function_stm1();
 	}
 }
-void function_stm1(){
-	if(currentTokenType == 'retorno' || currentTokenType == return_stm || currentTokenType == enter || currentTokenType == function_stm){
-		gatito
-		gatito
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::function_stm1(){
+	if(currentTokenType == "retorno" || currentTokenType == "return_stm" || currentTokenType == "enter" || currentTokenType == "function_stm"){
+		match("retorno");
+		return_stm();
+		enter();
+		function_stm();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void return_stm(){
-	if(currentTokenType == element2){
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::return_stm(){
+	if(currentTokenType == "element2"){
+		element2();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void negation(){
-	if(currentTokenType == '!' || currentTokenType == element1){
-		gatito
-		gatito
+void Syntactic::negation(){
+	if(currentTokenType == "token_not" || currentTokenType == "element1"){
+		match("token_not");
+		element1();
 	}
 }
-void assignment(){
-	if(currentTokenType == identifier || currentTokenType == '=' || currentTokenType == element2){
-		gatito
-		gatito
-		gatito
+void Syntactic::assignment(){
+	if(currentTokenType == "identifier" || currentTokenType == "token_assign" || currentTokenType == "element2"){
+		match("identifier");
+		match("token_assign");
+		element2();
 	}
 }
-void array(){
-	if(currentTokenType == token_cor_izq || currentTokenType == array2 || currentTokenType == token_cor_der){
-		gatito
-		gatito
-		gatito
+void Syntactic::array(){
+	if(currentTokenType == "token_cor_izq" || currentTokenType == "array2" || currentTokenType == "token_cor_der"){
+		match("token_cor_izq");
+		array2();
+		match("token_cor_der");
 	}
 }
-void array2(){
-	if(currentTokenType == element2 || currentTokenType == array3){
-		gatito
-		gatito
+void Syntactic::array2(){
+	if(currentTokenType == "element2" || currentTokenType == "array3"){
+		element2();
+		array3();
 	}
 }
-void array3(){
-	if(currentTokenType == ',' || currentTokenType == array2){
-		gatito
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::array3(){
+	if(currentTokenType == "token_coma" || currentTokenType == "array2"){
+		match("token_coma");
+		array2();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
-void number(){
-	if(currentTokenType == token_integer){
-		gatito
-	}	else if(currentTokenType == token_float){
-		gatito
+void Syntactic::number(){
+	if(currentTokenType == "token_integer"){
+		match("token_integer");
+	}	else if(currentTokenType == "token_float"){
+		match("token_float");
 	}
 }
-void string (){
-	if(currentTokenType == token_string){
-		gatito
+void Syntactic::string (){
+	if(currentTokenType == "token_string"){
+		match("token_string");
 	}
 }
-void boolean(){
-	if(currentTokenType == 'true'){
-		gatito
-	}	else if(currentTokenType == 'false'){
-		gatito
+void Syntactic::boolean(){
+	if(currentTokenType == "true"){
+		match("true");
+	}	else if(currentTokenType == "false"){
+		match("false");
 	}
 }
-void enter(){
-	if(currentTokenType == '\n' || currentTokenType == n){
-		gatito
-		gatito
+void Syntactic::enter(){
+	if(currentTokenType == "\n" || currentTokenType == "n"){
+		match("\n");
+		n();
 	}
 }
-void n(){
-	if(currentTokenType == enter){
-		gatito
-	}	else if(currentTokenType == 'epsilon'){
-		gatito
+void Syntactic::n(){
+	if(currentTokenType == "enter"){
+		enter();
+	}	else if(currentTokenType == "epsilon"){
+		match("epsilon");
 	}
 }
