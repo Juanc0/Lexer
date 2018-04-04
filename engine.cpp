@@ -259,14 +259,20 @@ Grammar::~Grammar(){
 	ofs.close();
 }
 
-void Grammar::printVector(vector<string> &aux){
+string* Grammar::printVector(vector<string> &aux){
 	int size = aux.size();
+	string* array = new string[size];
 	cout << '[';
-	if(size!=0)
+	if(size!=0){
 		cout << aux[0];
-	for(int i=1; i<size; i++)
+		array[0] = aux[0];
+	}
+	for(int i=1; i<size; i++){
 		cout << ',' << aux[i];
+		array[i] = aux[i];
+	}
 	cout << ']' << endl;
+	return array;
 }
 // void printVector2(vector<vector<string> > &aux){
 // 	int size = aux.size();
@@ -440,7 +446,7 @@ void Grammar::generateSyntactic(){
 	ofs << "\tcurrentToken = lexer->nextToken();\n";
 	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
-	ofs << "\tstats();\n";
+	ofs << "\tprogram();\n";
 	// ofs << "\tcurrentToken = lexer->nextToken();\n";
 	ofs << "}\n";
 	ofs << "Syntactic::~Syntactic(){\n";
@@ -450,6 +456,11 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tcout << \"match f waitedToken \" << waitedToken << endl;\n";
 	ofs << "\tif(currentTokenType == waitedToken){\n";
 	ofs << "\t\tcurrentToken = lexer->nextToken();\n";
+	ofs << "\t\tif(currentToken == NULL){\n";
+	ofs << "\t\t\tcout << \"El analisis sintactico ha finalizado correctamente.\n\";\n";
+	ofs << "\t\t\texit(-1);\n";
+	ofs << "\t\t}\n";
+	// ofs << "\t\t\tcurrentToken = \"NULL\";\n";
 	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t}else{\n";
@@ -464,6 +475,7 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tcout << array[i];\n";
 	ofs << "\t}\n";
 	ofs << "\tcout << \"}\";\n";
+	ofs << "\texit(-1);\n";
 	ofs << "}\n";
 
 	string lexeme, comp;
@@ -484,8 +496,11 @@ void Grammar::generateSyntactic(){
 				lexeme = pred[i][j][k];
 				tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 				comp = tokenExist? tokenTypes[lexeme] : lexeme;
-				// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
-				ofs << "currentTokenType == \"" << comp << "\"";
+				cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
+				// if(comp == "NULL")
+				// 	ofs << "currentTokenType == " << comp;
+				// else
+					ofs << "currentTokenType == \"" << comp << "\"";
 				// cout << "currentTokenType == \"" << comp << "\"";
 				if(k<pred[i][j].size()-1){
 					ofs << " || ";
@@ -509,8 +524,9 @@ void Grammar::generateSyntactic(){
 					tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 					comp = tokenExist? tokenTypes[lexeme] : lexeme;
 					// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
-					ofs << "\t\tmatch(\"" << comp << "\");\n";
-					// cout << "\t\tmatch(\"" << comp << "\");\n";
+					if(comp != "EPSILON")
+						ofs << "\t\tmatch(\"" << comp << "\");\n";
+						// cout << "\t\tmatch(\"" << comp << "\");\n";
 				}
 			}
 			ofs << "\t}";
@@ -521,15 +537,26 @@ void Grammar::generateSyntactic(){
 		}
 		ofs << "{\n";
 		ofs << "\t\tstring array[] = {";
-		// cout << "\tint array[] = {";
-		// if(pred[0].size() != 0 && pred[0][0].size() != 0)
+		cout << "||||||||    " << variables[i] << endl;
+		// if(pred[0].size() != 0 && pred[0][0].size() != 0){
+		// 	cout << "ASDFASDFASDF \n";
 		// 	ofs << "\"" << pred[i][0][0] << "\"";
-		// for(int j=0; j<pred[i].size(); j++)
-		// 	for(int k=1; k<pred[i][j].size(); k++)
-		// 		ofs << ",\"" << pred[i][j][k] << "\"";
-		// ofs << "\r";
+		// 	cout << "\"" << pred[i][0][0] << "\"";
+		// }
+		for(int j=0; j<pred[i].size(); j++){
+			string* printVector(pred[i][j]);
+			for(int k=0; k<pred[i][j].size(); k++){
+				if(j==0 && k==0)
+					cout << "\r";
+				cout << ",\"" << pred[i][j][k] << "\"";
+
+				// ofs << ",\"" << pred[i][j][k] << "\"";
+			}
+		}
+		ofs << "\r";
 		ofs << "};\n";
 		// cout << "};\n";
+		// if(find())
 		ofs << "\t\tsyntacticError(array);\n";
 		ofs << "\t}\n";
 		ofs << "}\n";
