@@ -8,7 +8,7 @@ compound_stat -> if_stat | while_stat | for_stat | funcion
 simple_stat -> assignment | log | importar | retornar | atom
 assignment -> variable '=' assignment1
 assignment1 -> assignment | expr
-if_stat -> 'if' condition_block C
+if_stat -> 'if' '(' condition_block ')' C
 C -> 'else' stat_block | EPSILON
 while_stat -> 'while' expr stat_block
 for_stat -> 'for' 'id' 'in' expr stat_block
@@ -39,3 +39,4 @@ expr -> '!' expr | '(' expr ')' | atom op
 op -> N expr | EPSILON
 N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
 atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil' | objeto
+NEWLINE ->
