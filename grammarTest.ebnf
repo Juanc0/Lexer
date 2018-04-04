@@ -1,22 +1,25 @@
-program -> n statements2 n
-statements -> n '{' n statements2 n '}' enter | enter statement enter
+program -> n statements2 n | EPSILON
+statements -> n statements1
+statements1 -> '{' n statements2 n '}' | enter statement
 statements2 -> statement statements3 | EPSILON
 statements3 -> enter statements2 | EPSILON
 statement -> element | routine
 element -> element2 | assignment
-element1 -> number | boolean | 'id' | negation | functioncall | genoperation
+element1 -> number | boolean | negation | functioncall
 element2 -> element1 | 'token_string' | array | espoperation | 'nil'
 routine -> _if | _while | _for | function | log | leer | importar
 genoperation -> genoperation1 | '(' genoperation1 ')'
-genoperation1 -> element1 genoperator element1 | element2 fulloperator element2
-fulloperator -> '==' | '!==' | '&&' | '||'
+genoperation1 -> element1 genoperator element1
 genoperator -> '+' | '-' | '*' | '/' | '^' | '<' | '>' | '>=' | '<='
+fulloperation -> fulloperation1 | '(' fulloperation1 ')'
+fulloperation1 -> element2 fulloperator element2
+fulloperator -> '==' | '!==' | '&&' | '||'
 espoperation -> espoperator espoperation1 | '(' espoperator espoperation1 ')'
 espoperation1 -> '+' espoperation2 | '*' element1
 espoperation2 -> espoperator | 'id'
 espoperator -> 'token_string' | array
 _for -> 'for' 'id' 'in' forparam statements
-forparam -> espoperator | espoperation | 'id' | functioncall
+forparam -> espoperator | espoperation | functioncall
 _while -> 'while' condition statements
 _if -> 'if' condition statements _else
 _else -> 'else' statements | EPSILON
@@ -27,8 +30,8 @@ leer -> 'leer' '(' 'id' ')'
 importar -> 'importar' importar1 | 'desde' importar1 'importar' 'id'
 importar1 -> 'id' importar2
 importar2 -> '.' importar1 | EPSILON
-functioncall -> 'id' '(' cparameters ')'
-cparameters -> cparameters1 | EPSILON
+functioncall -> 'id' cparameters
+cparameters -> '(' cparameters1 ')' | EPSILON
 cparameters1 -> element2 cparameters2
 cparameters2 -> ',' cparameters1 | EPSILON
 function -> 'funcion' 'id' '(' parameters ')' functionstm 'end' 'funcion'
