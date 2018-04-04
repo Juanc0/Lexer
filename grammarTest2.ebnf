@@ -1,9 +1,11 @@
-from_input -> stat NEWLINE
+program -> stats | EPSILON
+stats -> stat stats1 | EPSILON
+stats1 -> NEWLINE stats | EPSILON
 A -> stat A | EPSILON
 B -> NEWLINE B | EPSILON
 stat -> simple_stat | compound_stat
 compound_stat -> if_stat | while_stat | for_stat | funcion
-simple_stat -> assignment | log | importar | retornar | atom NEWLINE
+simple_stat -> assignment | log | importar | retornar | atom
 assignment -> variable '=' assignment1
 assignment1 -> assignment | expr
 if_stat -> 'if' condition_block C
@@ -22,6 +24,10 @@ condition_block -> expr condition_block1 stat_block
 condition_block1 -> NEWLINE | EPSILON
 stat_block -> '{' Z '}' | stat NEWLINE
 array -> 'OKEY' G 'CKEY'
+objeto -> '{' L '}'
+L -> Keyvalue M | EPSILON
+M -> ',' Keyvalue M | EPSILON
+Keyvalue -> 'id' ':' expr
 G -> expr H | EPSILON
 H -> ',' expr H | EPSILON
 variable -> 'id' K variable1
@@ -29,9 +35,7 @@ variable1 -> J | EPSILON
 J -> '(' G ')' | EPSILON
 parametro -> 'id' parametro1
 parametro1 -> '=' expr | EPSILON
-expr -> expr N expr | '!' expr | '(' expr ')' | atom
+expr -> '!' expr | '(' expr ')' | atom op
+op -> N expr | EPSILON
 N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
-atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil'
-L -> Keyvalue M | EPSILON
-M -> ',' keyvalue M | EPSILON
-Keyvalue -> 'id' ':' expr
+atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil' | objeto
