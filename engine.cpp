@@ -25,7 +25,7 @@ class Grammar{
 	public:
 		Grammar(string ifname, string ofname, string ifnamepred);
 		~Grammar();
-		void printVector(vector<string> &aux);
+		string* printVector(vector<string> &aux);
 		// void printVector2(vector<vector<string> > &aux);
 		void printRules();
 		void printPred();
@@ -435,7 +435,7 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tSyntactic(bool useFile, string str);\n";
 	ofs << "\t\t~Syntactic();\n";
 	ofs << "\t\tvoid match(string waitedToken);\n";
-	ofs << "\t\tvoid syntacticError(string* array);\n";
+	ofs << "\t\tvoid syntacticError(vector<string> &v);\n";
 	for(int i=0; i<variables.size(); i++){
 		// cout << "index2 debug" << endl;
 		ofs << "\t\tvoid " << variables[i] << "();\n";
@@ -457,23 +457,24 @@ void Grammar::generateSyntactic(){
 	ofs << "\tif(currentTokenType == waitedToken){\n";
 	ofs << "\t\tcurrentToken = lexer->nextToken();\n";
 	ofs << "\t\tif(currentToken == NULL){\n";
-	ofs << "\t\t\tcout << \"El analisis sintactico ha finalizado correctamente.\n\";\n";
+	ofs << "\t\t\tcout << \"El analisis sintactico ha finalizado correctamente.\";\n";
 	ofs << "\t\t\texit(-1);\n";
 	ofs << "\t\t}\n";
 	// ofs << "\t\t\tcurrentToken = \"NULL\";\n";
 	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t}else{\n";
-	ofs << "\t\tstring array[] = {waitedToken};\n";
+	ofs << "\t\tvector<string> array;\n";
+	ofs << "\t\tarray.push_back(waitedToken);\n";
 	ofs << "\t\tsyntacticError(array);\n";
 	ofs << "\t}\n";
 	ofs << "}\n";
-	ofs << "void Syntactic::syntacticError(string* array){\n";
-	ofs << "\tint n = *(&array + 1) - array;\n";
+	ofs << "void Syntactic::syntacticError(vector<string> &v){\n";
 	ofs << "\tcout << \"<\" << currentToken->getRow() << \":\" << currentToken->getColumn() << \"> Error sintactico. Encontrado: {\" << currentToken->getLexeme() << \"}; se esperaba: {\";\n";
-	ofs << "\tfor(int i=0; i<n; i++){\n";
-	ofs << "\t\tcout << array[i];\n";
-	ofs << "\t}\n";
+	ofs << "\tif(v.size() != 0);\n";
+	ofs << "\t\tcout << v[0];\n";
+	ofs << "\tfor(int i=1; i<v.size(); i++)\n";
+	ofs << "\t\tcout << \", \" << v[i];\n";
 	ofs << "\tcout << \"}\";\n";
 	ofs << "\texit(-1);\n";
 	ofs << "}\n";
@@ -536,27 +537,16 @@ void Grammar::generateSyntactic(){
 				ofs << " ";
 		}
 		ofs << "{\n";
-		ofs << "\t\tstring array[] = {";
-		cout << "||||||||    " << variables[i] << endl;
-		// if(pred[0].size() != 0 && pred[0][0].size() != 0){
-		// 	cout << "ASDFASDFASDF \n";
-		// 	ofs << "\"" << pred[i][0][0] << "\"";
-		// 	cout << "\"" << pred[i][0][0] << "\"";
-		// }
-		for(int j=0; j<pred[i].size(); j++){
-			string* printVector(pred[i][j]);
+		ofs << "\t\tvector<string> array;\n";
+		// cout << "||||||||    " << variables[i] << endl;
+		if(pred[0].size() != 0 && pred[0][0].size() != 0)
+			ofs << "\t\tarray.push_back(\"" << pred[i][0][0] << "\");\n";
+		for(int j=0; j<pred[i].size(); j++)
 			for(int k=0; k<pred[i][j].size(); k++){
-				if(j==0 && k==0)
-					cout << "\r";
-				cout << ",\"" << pred[i][j][k] << "\"";
-
-				// ofs << ",\"" << pred[i][j][k] << "\"";
+				if(j==0 && k==0)continue;
+				ofs << "\t\tarray.push_back(\"" << pred[i][j][k] << "\");\n";
 			}
-		}
-		ofs << "\r";
-		ofs << "};\n";
 		// cout << "};\n";
-		// if(find())
 		ofs << "\t\tsyntacticError(array);\n";
 		ofs << "\t}\n";
 		ofs << "}\n";

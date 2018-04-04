@@ -6,7 +6,7 @@ class Syntactic{
 		Syntactic(bool useFile, string str);
 		~Syntactic();
 		void match(string waitedToken);
-		void syntacticError(string* array);
+		void syntacticError(vector<string> &v);
 		void program();
 		void stats();
 		void stats1();
@@ -67,23 +67,23 @@ void Syntactic::match(string waitedToken){
 	if(currentTokenType == waitedToken){
 		currentToken = lexer->nextToken();
 		if(currentToken == NULL){
-			cout << "El analisis sintactico ha finalizado correctamente.
-";
+			cout << "El analisis sintactico ha finalizado correctamente.";
 			exit(-1);
 		}
 		cout << currentToken->getLexeme() << " " << currentToken->getType() << endl;
 		currentTokenType = currentToken->getType() == "rw"?currentToken->getLexeme():currentToken->getType();
 	}else{
-		string array[] = {waitedToken};
+		vector<string> array;
+		array.push_back(waitedToken);
 		syntacticError(array);
 	}
 }
-void Syntactic::syntacticError(string* array){
-	int n = *(&array + 1) - array;
+void Syntactic::syntacticError(vector<string> &v){
 	cout << "<" << currentToken->getRow() << ":" << currentToken->getColumn() << "> Error sintactico. Encontrado: {" << currentToken->getLexeme() << "}; se esperaba: {";
-	for(int i=0; i<n; i++){
-		cout << array[i];
-	}
+	if(v.size() != 0);
+		cout << v[0];
+	for(int i=1; i<v.size(); i++)
+		cout << ", " << v[i];
 	cout << "}";
 	exit(-1);
 }
@@ -93,7 +93,26 @@ void Syntactic::program(){
 		stats();
 	}else if(currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -104,7 +123,26 @@ void Syntactic::stats(){
 		stats1();
 	}else if(currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -115,7 +153,9 @@ void Syntactic::stats1(){
 		stats();
 	}else if(currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -126,7 +166,27 @@ void Syntactic::A(){
 		A();
 	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("}");
+		array.push_back("end");
 		syntacticError(array);
 	}
 }
@@ -137,7 +197,10 @@ void Syntactic::B(){
 		B();
 	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
+		array.push_back("}");
+		array.push_back("end");
 		syntacticError(array);
 	}
 }
@@ -148,7 +211,25 @@ void Syntactic::stat(){
 	}else if(currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 		compound_stat();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -163,7 +244,11 @@ void Syntactic::compound_stat(){
 	}else if(currentTokenType == "funcion"){
 		funcion();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("if");
+		array.push_back("while");
+		array.push_back("for");
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -182,7 +267,22 @@ void Syntactic::simple_stat(){
 	}else if(currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id"){
 		atom();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("log");
+		array.push_back("leer");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("retorno");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -193,7 +293,8 @@ void Syntactic::assignment(){
 		match("token_assign");
 		assignment1();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -204,7 +305,19 @@ void Syntactic::assignment1(){
 	}else if(currentTokenType == "token_not" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id"){
 		expr();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("!");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -217,7 +330,8 @@ void Syntactic::if_stat(){
 		match("token_par_der");
 		C();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("if");
 		syntacticError(array);
 	}
 }
@@ -228,7 +342,30 @@ void Syntactic::C(){
 		stat_block();
 	}else if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("else");
+		array.push_back("token_salto_linea");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -241,7 +378,8 @@ void Syntactic::while_stat(){
 		match("token_par_der");
 		stat_block();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("while");
 		syntacticError(array);
 	}
 }
@@ -254,7 +392,8 @@ void Syntactic::for_stat(){
 		expr();
 		stat_block();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("for");
 		syntacticError(array);
 	}
 }
@@ -266,7 +405,8 @@ void Syntactic::log(){
 		expr();
 		match("token_par_der");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("log");
 		syntacticError(array);
 	}
 }
@@ -278,7 +418,8 @@ void Syntactic::leer(){
 		variable();
 		match("token_par_der");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("leer");
 		syntacticError(array);
 	}
 }
@@ -294,7 +435,8 @@ void Syntactic::funcion(){
 		match("end");
 		match("funcion");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -305,7 +447,26 @@ void Syntactic::Z(){
 	}else if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 		A();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -316,7 +477,9 @@ void Syntactic::E(){
 		F();
 	}else if(currentTokenType == "token_par_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back(")");
 		syntacticError(array);
 	}
 }
@@ -328,7 +491,9 @@ void Syntactic::F(){
 		F();
 	}else if(currentTokenType == "token_par_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back(",");
+		array.push_back(")");
 		syntacticError(array);
 	}
 }
@@ -344,7 +509,9 @@ void Syntactic::importar(){
 		match("importar");
 		match("id");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("importar");
+		array.push_back("desde");
 		syntacticError(array);
 	}
 }
@@ -356,7 +523,49 @@ void Syntactic::K(){
 		K();
 	}else if(currentTokenType == "token_par_izq" || currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back(".");
+		array.push_back("(");
+		array.push_back(")");
+		array.push_back("=");
+		array.push_back("token_salto_linea");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
+		array.push_back("^");
+		array.push_back("*");
+		array.push_back("/");
+		array.push_back("%");
+		array.push_back("+");
+		array.push_back("-");
+		array.push_back("<=");
+		array.push_back(">=");
+		array.push_back("<");
+		array.push_back(">");
+		array.push_back("==");
+		array.push_back("!=");
+		array.push_back("&&");
+		array.push_back("||");
+		array.push_back(",");
+		array.push_back("]");
 		syntacticError(array);
 	}
 }
@@ -369,7 +578,8 @@ void Syntactic::retornar(){
 		match("token_par_der");
 		ENTER();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("retorno");
 		syntacticError(array);
 	}
 }
@@ -380,7 +590,18 @@ void Syntactic::condition_block(){
 		condition_block1();
 		stat_block();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("!");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -390,7 +611,26 @@ void Syntactic::condition_block1(){
 		ENTER();
 	}else if(currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -404,7 +644,26 @@ void Syntactic::stat_block(){
 		stat();
 		ENTER();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
 		syntacticError(array);
 	}
 }
@@ -415,7 +674,8 @@ void Syntactic::array(){
 		G();
 		match("token_cor_der");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("[");
 		syntacticError(array);
 	}
 }
@@ -426,7 +686,8 @@ void Syntactic::objeto(){
 		L();
 		match("token_llave_der");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("{");
 		syntacticError(array);
 	}
 }
@@ -437,7 +698,9 @@ void Syntactic::L(){
 		M();
 	}else if(currentTokenType == "token_llave_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
+		array.push_back("}");
 		syntacticError(array);
 	}
 }
@@ -449,7 +712,9 @@ void Syntactic::M(){
 		M();
 	}else if(currentTokenType == "token_llave_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back(",");
+		array.push_back("}");
 		syntacticError(array);
 	}
 }
@@ -460,7 +725,8 @@ void Syntactic::Keyvalue(){
 		match("token_dosp");
 		expr();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -471,7 +737,20 @@ void Syntactic::G(){
 		H();
 	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_cor_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("!");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back(")");
+		array.push_back("]");
 		syntacticError(array);
 	}
 }
@@ -483,7 +762,10 @@ void Syntactic::H(){
 		H();
 	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_cor_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back(",");
+		array.push_back(")");
+		array.push_back("]");
 		syntacticError(array);
 	}
 }
@@ -494,7 +776,8 @@ void Syntactic::variable(){
 		K();
 		variable1();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -504,7 +787,48 @@ void Syntactic::variable1(){
 		J();
 	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("(");
+		array.push_back(")");
+		array.push_back("=");
+		array.push_back("^");
+		array.push_back("*");
+		array.push_back("/");
+		array.push_back("%");
+		array.push_back("+");
+		array.push_back("-");
+		array.push_back("<=");
+		array.push_back(">=");
+		array.push_back("<");
+		array.push_back(">");
+		array.push_back("==");
+		array.push_back("!=");
+		array.push_back("&&");
+		array.push_back("||");
+		array.push_back(",");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("token_salto_linea");
+		array.push_back("]");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -516,7 +840,48 @@ void Syntactic::J(){
 		match("token_par_der");
 	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("(");
+		array.push_back(")");
+		array.push_back("=");
+		array.push_back("^");
+		array.push_back("*");
+		array.push_back("/");
+		array.push_back("%");
+		array.push_back("+");
+		array.push_back("-");
+		array.push_back("<=");
+		array.push_back(">=");
+		array.push_back("<");
+		array.push_back(">");
+		array.push_back("==");
+		array.push_back("!=");
+		array.push_back("&&");
+		array.push_back("||");
+		array.push_back(",");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("token_salto_linea");
+		array.push_back("]");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -526,7 +891,8 @@ void Syntactic::parametro(){
 		match("id");
 		parametro1();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -537,7 +903,10 @@ void Syntactic::parametro1(){
 		expr();
 	}else if(currentTokenType == "token_coma" || currentTokenType == "token_par_der"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("=");
+		array.push_back(",");
+		array.push_back(")");
 		syntacticError(array);
 	}
 }
@@ -554,7 +923,18 @@ void Syntactic::expr(){
 		atom();
 		op();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("!");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
 		syntacticError(array);
 	}
 }
@@ -565,7 +945,46 @@ void Syntactic::op(){
 		expr();
 	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("^");
+		array.push_back("*");
+		array.push_back("/");
+		array.push_back("%");
+		array.push_back("+");
+		array.push_back("-");
+		array.push_back("<=");
+		array.push_back(">=");
+		array.push_back("<");
+		array.push_back(">");
+		array.push_back("==");
+		array.push_back("!=");
+		array.push_back("&&");
+		array.push_back("||");
+		array.push_back(")");
+		array.push_back(",");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back("token_salto_linea");
+		array.push_back("]");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
@@ -600,7 +1019,21 @@ void Syntactic::N(){
 	}else if(currentTokenType == "token_or"){
 		match("token_or");
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("^");
+		array.push_back("*");
+		array.push_back("/");
+		array.push_back("%");
+		array.push_back("+");
+		array.push_back("-");
+		array.push_back("<=");
+		array.push_back(">=");
+		array.push_back("<");
+		array.push_back(">");
+		array.push_back("==");
+		array.push_back("!=");
+		array.push_back("&&");
+		array.push_back("||");
 		syntacticError(array);
 	}
 }
@@ -625,7 +1058,16 @@ void Syntactic::atom(){
 	}else if(currentTokenType == "token_llave_izq"){
 		objeto();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("[");
+		array.push_back("id");
+		array.push_back("nil");
+		array.push_back("{");
 		syntacticError(array);
 	}
 }
@@ -635,7 +1077,8 @@ void Syntactic::ENTER(){
 		match("token_salto_linea");
 		NEWLINE();
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
 		syntacticError(array);
 	}
 }
@@ -645,7 +1088,31 @@ void Syntactic::NEWLINE(){
 		ENTER();
 	}else if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_par_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
-		string array[] = {};
+		vector<string> array;
+		array.push_back("token_salto_linea");
+		array.push_back("token_salto_linea");
+		array.push_back("id");
+		array.push_back("leer");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("if");
+		array.push_back("for");
+		array.push_back("while");
+		array.push_back("funcion");
+		array.push_back(")");
+		array.push_back("}");
+		array.push_back("end");
+		array.push_back("NULL");
 		syntacticError(array);
 	}
 }
