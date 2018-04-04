@@ -15,7 +15,7 @@ funcion -> 'funcion' 'id' '(' E ')' Z 'end' 'funcion'
 Z -> B | A
 E -> parametro F | EPSILON
 F -> ',' parametro F | EPSILON
-importar -> 'importar' 'id' K| 'desde' 'id' 'importar' 'id'
+importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
 K -> '.' 'id' K | EPSILON
 retornar -> 'retorno' '(' expr ')' NEWLINE
 condition_block -> expr condition_block1 stat_block
@@ -29,50 +29,9 @@ variable1 -> J | EPSILON
 J -> '(' G ')' | EPSILON
 parametro -> 'id' parametro1
 parametro1 -> '=' expr | EPSILON
-expr -> N expr | '!' expr | '(' expr ')' | atom
+expr -> expr N expr | '!' expr | '(' expr ')' | atom
 N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
 atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil'
 L -> Keyvalue M | EPSILON
 M -> ',' keyvalue M | EPSILON
-Keyvalue -> 'id' POINTS expr
-
-OR -> '||'
-AND -> '&&'
-EQ -> '=='
-NEQ -> '!='
-GT -> '>'
-LT -> '<'
-GTEQ -> '>='
-LTEQ -> '<='
-PLUS -> '+'
-MINUS -> '-'
-MULT -> '*'
-DIV -> '/'
-MOD -> '%'
-POW -> '^'
-NOT -> '!'
-ASSIGN -> '='
-OPAR -> '('
-CPAR -> ')'
-OBRACE -> '{'
-CBRACE -> '}'
-OKEY -> '['
-CKEY -> ']'
-COMMA -> ','
-POINTS -> ':'
-
-TRUE -> 'true'
-FALSE -> 'false'
-NIL -> 'nil'
-IF -> 'if'
-ELSE -> 'else'
-WHILE -> 'while'
-LOG -> 'log'
-FOR -> 'for'
-IN -> 'in'
-FUNCION -> 'funcion'
-END -> 'end'
-RETORNO -> 'retorno'
-IMPORT -> 'importar'
-FROM -> 'desde'
-POINT -> '.'
+Keyvalue -> 'id' ':' expr
