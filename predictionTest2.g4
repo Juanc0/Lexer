@@ -3,7 +3,7 @@ from_input : stat '\n'	'id', 'importar', 'desde', 'log', 'token_integer', 'token
 A : stat A	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion'
 | EPSILON	'}', 'end'
 ;
-B : '\n' B	'\\n'
+B : '\n'
 | EPSILON	'}', 'end'
 ;
 stat : simple_stat	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno'
@@ -28,7 +28,7 @@ assignment1 : assignment	'id'
 if_stat : 'if' condition_block C	'if'
 ;
 C : 'else' stat_block	'else'
-| EPSILON	'\\n', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end'
+| EPSILON	'\n', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end'
 ;
 while_stat : 'while' expr stat_block	'while'
 ;
@@ -38,13 +38,8 @@ log : 'log' '(' expr ')'	'log'
 ;
 funcion : 'funcion' 'id' '(' E ')' Z 'end' 'funcion'	'funcion'
 ;
-Z : B	'\\n'
+Z : B	'\n'
 | A	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion'
-;
-parametro : 'id' parametro1	'id'
-;
-parametro1 : '=' expr	'='
-| EPSILON	',', ')'
 ;
 E : parametro F	'id'
 | EPSILON	')'
@@ -56,12 +51,13 @@ importar : 'importar' 'id' K	'importar'
 | 'desde' 'id' 'importar' 'id'	'desde'
 ;
 K : '.' 'id' K	'.'
-| EPSILON	'(', '=', '\\n', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end', ')', ',', '{', ''
+| EPSILON	'(', '=', '\n', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end', ')', ',', '{', ''
 ;
 retornar : 'retorno' '(' expr ')' '\n'	'retorno'
 ;
 condition_block : expr condition_block1 stat_block	'!', '(', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'id'
-| '\n'	'\\n'
+;
+condition_block1 :  '\n'
 | EPSILON	'{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion'
 ;
 stat_block : '{' Z '}'	'{'
@@ -78,10 +74,15 @@ H : ',' expr H	','
 variable : 'id' K variable1	'id'
 ;
 variable1 : J	'('
-| EPSILON	'=', '\\n', ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '', '}', 'end'
+| EPSILON	'=', '\n', ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '', '}', 'end'
 ;
 J : '(' G ')'	'('
-| EPSILON	'=', '\\n', ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '', '}', 'end'
+| EPSILON	'=', '\n', ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion', '', '}', 'end'
+;
+parametro : 'id' parametro1	'id'
+;
+parametro1 : '=' expr	'='
+| EPSILON	',', ')'
 ;
 expr : N expr	'^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&'
 | '!' expr	'!'

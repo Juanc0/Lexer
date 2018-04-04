@@ -1,37 +1,86 @@
-from_input : stat '\n'
-A : stat A | EPSILON
-B : '\n' B | EPSILON
-stat : simple_stat | compound_stat
-compound_stat : if_stat | while_stat | for_stat | funcion
-simple_stat : assignment | log | importar | retornar | atom '\n'
-assignment : variable '=' assignment1
-assignment1 : assignment | expr
-if_stat : 'if' condition_block C
-C : 'else' stat_block | EPSILON
-while_stat : 'while' expr stat_block
-for_stat : 'for' 'id' 'in' expr stat_block
-log : 'log' '(' expr ')'
-funcion : 'funcion' 'id' '(' E ')' Z 'end' 'funcion'
-Z : B | A
-E : parametro F | EPSILON
-F : ',' parametro F | EPSILON
-importar : 'importar' 'id' K| 'desde' 'id' 'importar' 'id'
-K : '.' 'id' K | EPSILON
-retornar : 'retorno' '(' expr ')' '\n'
-condition_block : expr condition_block1 stat_block
-condition_block1 : '\n' | EPSILON
-stat_block : '{' Z '}' | stat '\n'
-array : '[' G ']'
-G : expr H | EPSILON
-H : ',' expr H | EPSILON
-variable : 'id' K variable1
-variable1 : J | EPSILON
-J : '(' G ')' | EPSILON
-parametro : 'id' parametro1
-parametro1 : '=' expr | EPSILON
-expr : N expr | '!' expr | '(' expr ')' | atom
-N : '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | '||'
-atom : 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil'
-L : Keyvalue M | EPSILON
-M : ',' keyvalue M | EPSILON
-Keyvalue : 'id' POINTS expr
+1	from_input : stat NEWLINE	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion'
+2	A : stat A	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion'
+3	A : EPSILON	'}', 'end'
+4	B : NEWLINE B	NEWLINE
+5	B : EPSILON	'}', 'end'
+6	stat : simple_stat	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno'
+7	stat : compound_stat	'if', 'for', 'while', 'funcion'
+8	compound_stat : if_stat	'if'
+9	compound_stat : while_stat	'while'
+10	compound_stat : for_stat	'for'
+11	compound_stat : funcion	'funcion'
+12	simple_stat : assignment	'id'
+13	simple_stat : log	'log'
+14	simple_stat : importar	'importar', 'desde'
+15	simple_stat : retornar	'retorno'
+16	simple_stat : atom NEWLINE	'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'id'
+17	assignment : variable '=' assignment1	'id'
+18	assignment1 : assignment	'id'
+19	assignment1 : expr	'!', '(', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'id'
+20	if_stat : 'if' condition_block C	'if'
+21	C : 'else' stat_block	'else'
+22	C : EPSILON	NEWLINE, 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end'
+23	while_stat : 'while' expr stat_block	'while'
+24	for_stat : 'for' 'id' 'in' expr stat_block	'for'
+25	log : 'log' '(' expr ')'	'log'
+26	funcion : 'funcion' 'id' '(' E ')' Z 'end' 'funcion'	'funcion'
+27	Z : B	NEWLINE
+28	Z : A	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion'
+29	E : parametro F	'id'
+30	E : EPSILON	')'
+31	F : ',' parametro F	','
+32	F : EPSILON	')'
+33	importar : 'importar' 'id' K	'importar'
+34	importar : 'desde' 'id' 'importar' 'id'	'desde'
+35	K : '.' 'id' K	'.'
+36	K : EPSILON	'(', '=', NEWLINE, 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion', '}', 'end', ')', ',', '{', ']'
+37	retornar : 'retorno' '(' expr ')' NEWLINE	'retorno'
+38	condition_block : expr condition_block1 stat_block	'!', '(', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'id'
+39	condition_block1 : NEWLINE	NEWLINE
+40	condition_block1 : EPSILON	'{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion'
+41	stat_block : '{' Z '}'	'{'
+42	stat_block : stat NEWLINE	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion'
+43	array : '[' G ']'	'['
+44	G : expr H	'!', '(', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'id'
+45	G : EPSILON	')', ']'
+46	H : ',' expr H	','
+47	H : EPSILON	')', ']'
+48	variable : 'id' K variable1	'id'
+49	variable1 : J	'('
+50	variable1 : EPSILON	'=', NEWLINE, ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion', ']', '}', 'end'
+51	J : '(' G ')'	'('
+52	J : EPSILON	'=', NEWLINE, ')', ',', '{', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'retorno', 'if', 'for', 'while', 'funcion', ']', '}', 'end'
+53	parametro : 'id' parametro1	'id'
+54	parametro1 : '=' expr	'='
+55	parametro1 : EPSILON	',', ')'
+56	expr : N expr	'^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||'
+57	expr : '!' expr	'!'
+58	expr : '(' expr ')'	'('
+59	expr : atom	'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', 'id'
+60	N : '^'	'^'
+61	N : '*'	'*'
+62	N : '/'	'/'
+63	N : '%'	'%'
+64	N : '+'	'+'
+65	N : '-'	'-'
+66	N : '<='	'<='
+67	N : '>='	'>='
+68	N : '<'	'<'
+69	N : '>'	'>'
+70	N : '=='	'=='
+71	N : '!='	'!='
+72	N : '&&'	'&&'
+73	N : '||'	'||'
+74	atom : 'token_integer'	'token_integer'
+75	atom : 'token_float'	'token_float'
+76	atom : 'true'	'true'
+77	atom : 'false'	'false'
+78	atom : 'token_string'	'token_string'
+79	atom : array	'['
+80	atom : variable	'id'
+81	atom : 'nil'	'nil'
+82	L : Keyvalue M	'id'
+83	L : EPSILON
+84	M : ',' keyvalue M	','
+85	M : EPSILON
+86	Keyvalue : 'id' ':' expr	'id'
