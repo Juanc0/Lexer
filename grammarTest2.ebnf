@@ -3,7 +3,7 @@ stats -> stat stats1 | EPSILON
 stats1 -> NEWLINE stats | EPSILON
 A -> stat A | EPSILON
 B -> NEWLINE B | EPSILON
-stat -> simple_stat | compound_stat
+stat -> simple_stat | compound_stat | NEWLINE
 compound_stat -> if_stat | while_stat | for_stat | funcion
 simple_stat -> assignment | log | importar | retornar | atom
 assignment -> variable '=' assignment1
@@ -39,4 +39,3 @@ expr -> '!' expr | '(' expr ')' | atom op
 op -> N expr | EPSILON
 N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
 atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil' | objeto
-NEWLINE ->
