@@ -433,7 +433,7 @@ class Syntactic{
 Syntactic::Syntactic(bool useFile, string str){
 	lexer = new Lexer(useFile, str);
 	currentToken = lexer->nextToken();
-	// cout << currentToken->getLexeme() <<" "<< currentToken->getType();
+	cout << currentToken->getLexeme() <<" "<< currentToken->getType() << endl;
 	currentTokenType = currentToken->getType() == "rw"?currentToken->getLexeme():currentToken->getType();
 	program();
 }
@@ -443,6 +443,7 @@ Syntactic::~Syntactic(){
 void Syntactic::match(string waitedToken){
 	if(currentTokenType == waitedToken){
 		currentToken = lexer->nextToken();
+		cout << currentToken->getLexeme() <<" "<< currentToken->getType() << endl;
 		currentTokenType = currentToken->getType() == "rw"?currentToken->getLexeme():currentToken->getType();
 	}else{
 		string array[] = {waitedToken};
@@ -1062,7 +1063,7 @@ void Syntactic::n(){
 int main(){
 
 	// cout << "main" << endl;
-		Syntactic* S = new Syntactic(true, "proram-example.txt");
+		Syntactic* S = new Syntactic(true, "program-example.txt");
 
 		delete S;
     // Lexer* lexer = new Lexer(false, "program-example.txt");

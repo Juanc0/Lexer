@@ -41,74 +41,146 @@ class Grammar{
 		void generateSyntactic();
 };
 Grammar::Grammar(string ifname, string ofname, string ifnamepred)
-	:ifs("grammar.g4"), ofs("syntactic.cpp"), ifspred("prediccion.g4"){
-	string line, lineaux, lineaux2;
+	:ifs("grammarTest2.g4"), ofs("syntactic.cpp"), ifspred("predictionTest2.g4"){
+	string prevVariable = "", currVariable, line, lineaux, lineRules, linePred;
 	int i;
+	vector<vector<string> > aux11;
+	vector<vector<string> > aux12;
+	int j;
 	while(getline(ifs, line)){
-		if(line == "" || line[0] == '/')continue;
-		// cout << "line" << line << endl;
-		vector<vector<string> > aux1;
+		cout << "(" << line << ")\n";
 		i = line.find('\t');
-		variables.push_back(line.substr(0, i));
-		nonTerminals.insert(line.substr(0, i));
-		// cout << line.substr(0, i) << " " << (nonTerminals.find(line.substr(0, i)) != nonTerminals.end()) << endl;
-		i = line.find(':')+1;
-		while(line[i]=='\t' || line[i]==' ')i++;
+		line = line.substr(i+1);
+		cout << "(" << line << ")\n";
+		i = line.find(' ');
+		cout << i << " " << line << endl;
+		currVariable = line.substr(0,i);
 		line = line.substr(i);
-
-		while(line != ""){
-			vector<string> aux2;
-			i = line.find('|');
-			if(i>0 && line[i-1]=='\''){
-				int j = i;
-				string lineaux3 = line.substr(i+2);
-				i = lineaux3.find('|');
-				if(i!=-1)
-					i += (j + 2);
+		// cout << "CARAJO (" << prevVariable << ") (" << currVariable << ")\n";
+		if(currVariable != prevVariable){
+			if(prevVariable != ""){
+				// cout << "prevVariable is not empty\n";
+				vector<vector<string> > aux111 = aux11;
+				vector<vector<string> > aux122 = aux12;
+				rules.push_back(aux111);
+				pred.push_back(aux122);
+				aux11.clear();
+				aux12.clear();
 			}
-			lineaux = i==-1?line:line.substr(0, i-1);
-			line = i==-1?"":line.substr(i+2);
-
-			while(lineaux != ""){
-				i = lineaux.find(' ');
-				lineaux2 = i==-1?lineaux:lineaux.substr(0, i);
-				aux2.push_back(lineaux2);
-				lineaux = i==-1?"":lineaux.substr(i+1	);
-			}
-			aux1.push_back(aux2);
+			prevVariable = currVariable;
+			variables.push_back(currVariable);
+			nonTerminals.insert(currVariable);
 		}
-		rules.push_back(aux1);
+		// cout << "(" << prevVariable << ") (" << currVariable << ")\n";
+
+		// cout << "line (" << line << ")\n";
+		i = line.find('\t');
+		lineRules = line.substr(0,i);
+		linePred = line.substr(i+1);
+		// cout << "lineRules (" << lineRules << ")\n";
+		// cout << "linePred (" << linePred << ")\n";
+
+
+
+		vector<string> aux21;
+		while(lineRules != ""){
+			i = lineRules.find(' ');
+			lineaux = i==-1?lineRules:lineRules.substr(0, i);
+			aux21.push_back(lineaux);
+			lineRules = i==-1?"":lineRules.substr(i+1);
+			// cout << "i " << i << "lineaux " << lineaux << "lineRules " << lineRules << "\n";
+		}
+		printVector(aux21);
+		aux11.push_back(aux21);
+
+
+		vector<string> aux22;
+		while(linePred != ""){
+			i = linePred.find(", ");
+			lineaux = i==-1?linePred:linePred.substr(0, i);
+			lineaux = lineaux.substr(1,lineaux.length()-2);
+			aux22.push_back(lineaux);
+			linePred = i==-1?"":linePred.substr(i+2);
+			// cout << "i " << i << "lineaux " << lineaux << "linePred " << linePred << "\n";
+		}
+		printVector(aux22);
+		aux12.push_back(aux22);
+		// cout << "\t\t SIZE() AUX11 AUX12 " << aux11.size() << aux12.size() << endl;
 	}
+	rules.push_back(aux11);
+	pred.push_back(aux12);
 
-	vector<vector<string> > aux1;
-	// vector<string> aux2;
-	while(getline(ifspred, line)){
-		// cout << "line: " << line << endl;
 
-		if(line == "" || line[0] == '/')continue;
-		if(line.find(';') != -1){
-			vector<vector<string> > aux3 = aux1;
-			pred.push_back(aux3);
-			aux1.clear();
-			continue;
-		}
-		if((i=line.find(':')+1)==0)
-			i=line.find('|')+1;
-		while(line[i]=='\t' || line[i]==' ')i++;
-		line = line.substr(i);
-		// cout << "line: " << line << endl;
-		vector<string> aux2;
-		while(line != ""){
-			i = line.find(' ');
-			lineaux = i==-1?line:line.substr(0, i);
-			aux2.push_back(lineaux);
-			line = i==-1?"":line.substr(i+1	);
-		}
-		// cout << "size" << aux2.size();
-		// printVector(aux2);
-		aux1.push_back(aux2);
-	}
 
+
+
+
+	// int i;
+	// while(getline(ifs, line)){
+	// 	if(line == "" || line[0] == '/')continue;
+	// 	// cout << "line" << line << endl;
+	// 	vector<vector<string> > aux1;
+	// 	i = line.find('\t');
+	// 	variables.push_back(line.substr(0, i));
+	// 	nonTerminals.insert(line.substr(0, i));
+	// 	// cout << line.substr(0, i) << " " << (nonTerminals.find(line.substr(0, i)) != nonTerminals.end()) << endl;
+	// 	i = line.find(':')+1;
+	// 	while(line[i]=='\t' || line[i]==' ')i++;
+	// 	line = line.substr(i);
+	//
+	// 	while(line != ""){
+	// 		vector<string> aux2;
+	// 		i = line.find('|');
+	// 		if(i>0 && line[i-1]=='\''){
+	// 			int j = i;
+	// 			string lineaux3 = line.substr(i+2);
+	// 			i = lineaux3.find('|');
+	// 			if(i!=-1)
+	// 				i += (j + 2);
+	// 		}
+	// 		lineaux = i==-1?line:line.substr(0, i-1);
+	// 		line = i==-1?"":line.substr(i+2);
+	//
+	// 		while(lineaux != ""){
+	// 			i = lineaux.find(' ');
+	// 			lineaux2 = i==-1?lineaux:lineaux.substr(0, i);
+	// 			aux2.push_back(lineaux2);
+	// 			lineaux = i==-1?"":lineaux.substr(i+1	);
+	// 		}
+	// 		aux1.push_back(aux2);
+	// 	}
+	// 	rules.push_back(aux1);
+	// }
+	//
+	// vector<vector<string> > aux1;
+	// // vector<string> aux2;
+	// while(getline(ifspred, line)){
+	// 	// cout << "line: " << line << endl;
+	//
+	// 	if(line == "" || line[0] == '/')continue;
+	// 	if(line.find(';') != -1){
+	// 		vector<vector<string> > aux3 = aux1;
+	// 		pred.push_back(aux3);
+	// 		aux1.clear();
+	// 		continue;
+	// 	}
+	// 	if((i=line.find(':')+1)==0)
+	// 		i=line.find('|')+1;
+	// 	while(line[i]=='\t' || line[i]==' ')i++;
+	// 	line = line.substr(i);
+	// 	// cout << "line: " << line << endl;
+	// 	vector<string> aux2;
+	// 	while(line != ""){
+	// 		i = line.find(' ');
+	// 		lineaux = i==-1?line:line.substr(0, i);
+	// 		aux2.push_back(lineaux);
+	// 		line = i==-1?"":line.substr(i+1	);
+	// 	}
+	// 	// cout << "size" << aux2.size();
+	// 	// printVector(aux2);
+	// 	aux1.push_back(aux2);
+	// }
+	//
 	// printRules();
 	//
 	// cout << "pred.size() " << pred.size() << endl;
@@ -461,10 +533,10 @@ void Grammar::generateSyntactic(){
 	}
 }
 int main(){
-	Grammar* G = new Grammar("grammar.g4", "syntactic.cpp", "pred.g4");
+	Grammar* G = new Grammar("grammarTest2.g4", "syntactic.cpp", "predictionTest2.g4");
 	G->generateSyntactic();
-	// G->printRules();
-	// G->printPred();
+	G->printRules();
+	G->printPred();
 	// G->printVector2(G->pred);
 	// G->printRules();
 	// G->generateFirst("n");
