@@ -46,11 +46,16 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 	int i;
 	vector<vector<string> > aux11;
 	vector<vector<string> > aux12;
+	int j;
 	while(getline(ifs, line)){
+		cout << "(" << line << ")\n";
+		i = line.find('\t');
+		line = line.substr(i+1);
 		cout << "(" << line << ")\n";
 		i = line.find(' ');
 		cout << i << " " << line << endl;
-		currVariable = line.substr(2,i-2);
+		currVariable = line.substr(0,i);
+		line = line.substr(i);
 		// cout << "CARAJO (" << prevVariable << ") (" << currVariable << ")\n";
 		if(currVariable != prevVariable){
 			if(prevVariable != ""){
@@ -68,7 +73,6 @@ Grammar::Grammar(string ifname, string ofname, string ifnamepred)
 		}
 		// cout << "(" << prevVariable << ") (" << currVariable << ")\n";
 
-		line = line.substr(i+3);
 		// cout << "line (" << line << ")\n";
 		i = line.find('\t');
 		lineRules = line.substr(0,i);
