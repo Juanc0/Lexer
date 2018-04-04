@@ -1,5 +1,5 @@
 /* Statements */
-program					:		n statements2 n | epsilon
+program					:		n statements2 n
 
 statements			:		n { n statements2 n } enter | enter statement enter
 statements2 		:		statement statements3 | epsilon
@@ -15,13 +15,14 @@ routine					:		if | while | for | function | log | leer | importar
 /* Operations */
 
 gen_operation		:		gen_operation1 | ( gen_operation1 )
-gen_operation1	:		element1 gen_operator element1 | element == element | element != element | element && element | element || element
+gen_operation1	:		element1 gen_operator element1 | element2 fulloperator element2
+fulloperator		:		== | != | && | ||
 gen_operator		:		+ | - | * | / | ^ | < | > | >= | <=
 
 esp_operation		:		esp_operator esp_operation1 | ( esp_operator esp_operation1 )
 esp_operation1	:		+ esp_operation2 | * element1
 esp_operation2	:		esp_operator | identifier
-esp_operator		:		string | array
+esp_operator		:		token_string | array
 
 /* If, for and While */
 
@@ -66,7 +67,6 @@ array2					:		element2 array3
 array3					:		, array2 | epsilon
 
 number					:		token_integer | token_float
-string 					:		token_string
 boolean					:		true | false
 
 enter						:		\n n

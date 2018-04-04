@@ -3,12 +3,12 @@
 program					:		n statements2 n
 
 statements			:		n '{' n statements2 n '}' enter | enter statement enter
-statements2 		:		statement statements3 | 'epsilon'
+statements2			:		statement statements3 | 'epsilon'
 statements3			:		enter statements2 | 'epsilon'
 statement				:		element | routine
 
 element					:		element2 | assignment
-element1				:		number | boolean | 'id' | negation | functioncall | genoperation
+element1				:		number | boolean | negation | functioncall | genoperation | fulloperation
 element2				:		element1 | 'token_string' | array | espoperation | 'nil'
 
 routine					:		_if | _while | _for | function | log | leer | importar
@@ -16,19 +16,22 @@ routine					:		_if | _while | _for | function | log | leer | importar
 /* Operations */
 
 genoperation		:		genoperation1 | '(' genoperation1 ')'
-genoperation1	  :		element1 genoperator element1 | element2 fulloperator element2
-fulloperator    :   '==' | '!=' | '&&' | ' || '
-genoperator		  :		'+' | '-' | '*' | '/' | '^' | '<' | '>' | '>=' | '<='
+genoperation1		:		element1 genoperator element1
+genoperator			:		'+' | '-' | '*' | '/' | '^' | '<' | '>' | '>=' | '<='
+
+fulloperation		:		fulloperation1 | '(' fulloperation1 ')'
+fulloperation1	:		element2 fulloperator element2
+fulloperator		:		'==' | '!=' | '&&' | '||'
 
 espoperation		:		espoperator espoperation1 | '(' espoperator espoperation1 ')'
-espoperation1	  :		'+' espoperation2 | '*' element1
-espoperation2	  :		espoperator | 'id'
-espoperator		  :		'token_string' | array
+espoperation1		:		'+' espoperation2 | '*' element1
+espoperation2		:		espoperator | 'id'
+espoperator			:		'token_string' | array
 
 /* If, for and While */
 
 _for						:		'for' 'id' 'in' forparam statements
-forparam				:		espoperator | espoperation | 'id' | functioncall
+forparam				:		espoperator | espoperation | functioncall
 _while					:		'while' condition statements
 _if							:		'if' condition statements _else
 _else						:		'else' statements | 'epsilon'
@@ -45,8 +48,8 @@ importar2				:  	'.' importar1 | 'epsilon'
 
 /* Function and Function_call */
 
-functioncall		:		'id' '(' cparameters ')'
-cparameters		  :		cparameters1 | 'epsilon'
+functioncall		:		'id' cparameters
+cparameters			:		'(' cparameters1 ')' | 'epsilon'
 cparameters1		:		element2 cparameters2
 cparameters2		:		',' cparameters1 | 'epsilon'
 
@@ -55,9 +58,9 @@ parameters			:		parameters1 | 'epsilon'
 parameters1			:		'id' parameters2
 parameters2			:		',' parameters1 | 'epsilon'
 
-functionstm		  :		enter statements2 functionstm1
+functionstm			:		enter statements2 functionstm1
 functionstm1		:		'retorno' returnstm enter functionstm | 'epsilon'
-returnstm			  :		element2 | 'epsilon'
+returnstm				:		element2 | 'epsilon'
 
 /* Terminal Symbols and Tokens */
 
@@ -67,8 +70,8 @@ array						:		'[' array2 ']'
 array2					:		element2 array3
 array3					:		',' array2 | 'epsilon'
 
-number  				:		'token_integer' | 'token_float'
+number					:		'token_integer' | 'token_float'
 boolean					:		'true' | 'false'
 
-enter						:		'/n' n
+enter						:		'\n' n
 n								:		enter | 'epsilon'
