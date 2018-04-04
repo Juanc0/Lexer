@@ -1,3 +1,4 @@
+0 program : stats | EPSILON
 1	stats : stat stats1	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'retorno', 'if', 'for', 'while', 'funcion'
 2	stats1 : '\n' stats	'\n'
 3	stats1 : EPSILON	$
