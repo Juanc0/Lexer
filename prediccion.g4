@@ -20,6 +20,7 @@ element1				:   token_integer token_float
                 |   !
                 |   id
                 |   token_integer token_float true false id ! token_string array [ ( nil
+								|   nil
 ;
 element2				:   token_integer token_float true false id ! token_string array [ ( nil
                 |   token_string
