@@ -367,40 +367,43 @@ Token* Lexer::nextToken(){
 
 
 
+
+
+
+
+
+
+
+
 class Syntactic{
 	public:
 		Lexer* lexer;
 		Token* currentToken;
 		string currentTokenType;
+		int level;
 		Syntactic(bool useFile, string str);
 		~Syntactic();
+		void printAsterisks();
 		void match(string waitedToken);
 		void syntacticError(vector<string> &v);
 		void program();
 		void stats();
 		void stats1();
-		void A();
-		void B();
 		void stat();
 		void compound_stat();
 		void simple_stat();
 		void assignment();
-		void assignment1();
 		void if_stat();
 		void C();
 		void while_stat();
 		void for_stat();
 		void log();
-		void leer();
 		void funcion();
-		void Z();
 		void E();
 		void F();
 		void importar();
 		void K();
 		void retornar();
-		void condition_block();
-		void condition_block1();
 		void stat_block();
 		void array();
 		void objeto();
@@ -418,22 +421,26 @@ class Syntactic{
 		void op();
 		void N();
 		void atom();
-		void ENTER();
-		void NEWLINE();
 };
 Syntactic::Syntactic(bool useFile, string str){
 	lexer = new Lexer(useFile, str);
 	currentToken = lexer->nextToken();
 		cout << currentToken->getLexeme() << " " << currentToken->getType() << endl;
 	currentTokenType = currentToken->getType() == "rw"?currentToken->getLexeme():currentToken->getType();
+	level=0;
 	program();
 }
 Syntactic::~Syntactic(){
 	delete lexer;
 }
-void Syntactic::match(string waitedToken){
-		cout << "match f waitedToken " << waitedToken << endl;
-	if(currentTokenType == waitedToken){
+void Syntactic::printAsterisks(){
+	int i=0;
+	for(i=0; i<level; i++)
+		cout << '*';
+}
+void Syntactic::match(string waitedTokenType){
+	cout << "match function, curreentTokenType: (" << currentTokenType << "), waitedTokenType: (" << waitedTokenType << ")\n";
+	if(currentTokenType == waitedTokenType){
 		currentToken = lexer->nextToken();
 		if(currentToken == NULL){
 			cout << "El analisis sintactico ha finalizado correctamente.";
@@ -443,7 +450,7 @@ void Syntactic::match(string waitedToken){
 		currentTokenType = currentToken->getType() == "rw"?currentToken->getLexeme():currentToken->getType();
 	}else{
 		vector<string> array;
-		array.push_back(waitedToken);
+		array.push_back(waitedTokenType);
 		syntacticError(array);
 	}
 }
@@ -457,15 +464,18 @@ void Syntactic::syntacticError(vector<string> &v){
 	exit(-1);
 }
 void Syntactic::program(){
-		cout << "funcion program currentToken " << currentToken << endl;
-	if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
+	level++;
+	printAsterisks();
+	cout << "program\n";
+	if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "retorno" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 		stats();
 	}else if(currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
+		array.push_back("token_salto_linea");
 		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
+		array.push_back("importar");
+		array.push_back("desde");
 		array.push_back("log");
 		array.push_back("token_integer");
 		array.push_back("token_float");
@@ -475,8 +485,7 @@ void Syntactic::program(){
 		array.push_back("nil");
 		array.push_back("[");
 		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
+		array.push_back("retorno");
 		array.push_back("if");
 		array.push_back("for");
 		array.push_back("while");
@@ -484,18 +493,23 @@ void Syntactic::program(){
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::stats(){
-		cout << "funcion stats currentToken " << currentToken << endl;
-	if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
+	level++;
+	printAsterisks();
+	cout << "stats\n";
+	if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "retorno" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 		stat();
 		stats1();
-	}else if(currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
+		array.push_back("token_salto_linea");
 		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
+		array.push_back("importar");
+		array.push_back("desde");
 		array.push_back("log");
 		array.push_back("token_integer");
 		array.push_back("token_float");
@@ -505,85 +519,53 @@ void Syntactic::stats(){
 		array.push_back("nil");
 		array.push_back("[");
 		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
+		array.push_back("retorno");
 		array.push_back("if");
 		array.push_back("for");
 		array.push_back("while");
 		array.push_back("funcion");
+		array.push_back("}");
+		array.push_back("end");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::stats1(){
-		cout << "funcion stats1 currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "stats1\n";
 	if(currentTokenType == "token_salto_linea"){
-		ENTER();
+		match("token_salto_linea");
 		stats();
-	}else if(currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("token_salto_linea");
+		array.push_back("}");
+		array.push_back("end");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
-}
-void Syntactic::A(){
-		cout << "funcion A currentToken " << currentToken << endl;
-	if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
-		stat();
-		A();
-	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end"){
-	}else{
-		vector<string> array;
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
-		array.push_back("}");
-		array.push_back("end");
-		syntacticError(array);
-	}
-}
-void Syntactic::B(){
-		cout << "funcion B currentToken " << currentToken << endl;
-	if(currentTokenType == "token_salto_linea"){
-		ENTER();
-		B();
-	}else if(currentTokenType == "token_llave_der" || currentTokenType == "end"){
-	}else{
-		vector<string> array;
-		array.push_back("token_salto_linea");
-		array.push_back("}");
-		array.push_back("end");
-		syntacticError(array);
-	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::stat(){
-		cout << "funcion stat currentToken " << currentToken << endl;
-	if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde"){
+	level++;
+	printAsterisks();
+	cout << "stat\n";
+	if(currentTokenType == "id" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "retorno"){
 		simple_stat();
 	}else if(currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
 		compound_stat();
+	}else if(currentTokenType == "token_salto_linea"){
+		match("token_salto_linea");
 	}else{
 		vector<string> array;
 		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
+		array.push_back("importar");
+		array.push_back("desde");
 		array.push_back("log");
 		array.push_back("token_integer");
 		array.push_back("token_float");
@@ -593,17 +575,21 @@ void Syntactic::stat(){
 		array.push_back("nil");
 		array.push_back("[");
 		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
+		array.push_back("retorno");
 		array.push_back("if");
 		array.push_back("for");
 		array.push_back("while");
 		array.push_back("funcion");
+		array.push_back("token_salto_linea");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::compound_stat(){
-		cout << "funcion compound_stat currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "compound_stat\n";
 	if(currentTokenType == "if"){
 		if_stat();
 	}else if(currentTokenType == "while"){
@@ -620,15 +606,17 @@ void Syntactic::compound_stat(){
 		array.push_back("funcion");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::simple_stat(){
-		cout << "funcion simple_stat currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "simple_stat\n";
 	if(currentTokenType == "id"){
 		assignment();
 	}else if(currentTokenType == "log"){
 		log();
-	}else if(currentTokenType == "leer"){
-		leer();
 	}else if(currentTokenType == "importar" || currentTokenType == "desde"){
 		importar();
 	}else if(currentTokenType == "retorno"){
@@ -639,7 +627,6 @@ void Syntactic::simple_stat(){
 		vector<string> array;
 		array.push_back("id");
 		array.push_back("log");
-		array.push_back("leer");
 		array.push_back("importar");
 		array.push_back("desde");
 		array.push_back("retorno");
@@ -654,92 +641,68 @@ void Syntactic::simple_stat(){
 		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::assignment(){
-		cout << "funcion assignment currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "assignment\n";
 	if(currentTokenType == "id"){
 		variable();
 		match("token_assign");
-		assignment1();
-	}else{
-		vector<string> array;
-		array.push_back("id");
-		syntacticError(array);
-	}
-}
-void Syntactic::assignment1(){
-		cout << "funcion assignment1 currentToken " << currentToken << endl;
-	if(currentTokenType == "id"){
-		assignment();
-	}else if(currentTokenType == "token_not" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id"){
 		expr();
 	}else{
 		vector<string> array;
 		array.push_back("id");
-		array.push_back("!");
-		array.push_back("(");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::if_stat(){
-		cout << "funcion if_stat currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "if_stat\n";
 	if(currentTokenType == "if"){
 		match("if");
 		match("token_par_izq");
-		condition_block();
+		expr();
 		match("token_par_der");
+		stat_block();
 		C();
 	}else{
 		vector<string> array;
 		array.push_back("if");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::C(){
-		cout << "funcion C currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "C\n";
 	if(currentTokenType == "else"){
 		match("else");
 		stat_block();
-	}else if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_salto_linea" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("else");
 		array.push_back("token_salto_linea");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
 		array.push_back("}");
 		array.push_back("end");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::while_stat(){
-		cout << "funcion while_stat currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "while_stat\n";
 	if(currentTokenType == "while"){
 		match("while");
 		match("token_par_izq");
@@ -751,9 +714,13 @@ void Syntactic::while_stat(){
 		array.push_back("while");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::for_stat(){
-		cout << "funcion for_stat currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "for_stat\n";
 	if(currentTokenType == "for"){
 		match("for");
 		match("id");
@@ -765,9 +732,13 @@ void Syntactic::for_stat(){
 		array.push_back("for");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::log(){
-		cout << "funcion log currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "log\n";
 	if(currentTokenType == "log"){
 		match("log");
 		match("token_par_izq");
@@ -778,29 +749,20 @@ void Syntactic::log(){
 		array.push_back("log");
 		syntacticError(array);
 	}
-}
-void Syntactic::leer(){
-		cout << "funcion leer currentToken " << currentToken << endl;
-	if(currentTokenType == "leer"){
-		match("leer");
-		match("token_par_izq");
-		variable();
-		match("token_par_der");
-	}else{
-		vector<string> array;
-		array.push_back("leer");
-		syntacticError(array);
-	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::funcion(){
-		cout << "funcion funcion currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "funcion\n";
 	if(currentTokenType == "funcion"){
 		match("funcion");
 		match("id");
 		match("token_par_izq");
 		E();
 		match("token_par_der");
-		Z();
+		stats();
 		match("end");
 		match("funcion");
 	}else{
@@ -808,39 +770,13 @@ void Syntactic::funcion(){
 		array.push_back("funcion");
 		syntacticError(array);
 	}
-}
-void Syntactic::Z(){
-		cout << "funcion Z currentToken " << currentToken << endl;
-	if(currentTokenType == "token_salto_linea"){
-		B();
-	}else if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
-		A();
-	}else{
-		vector<string> array;
-		array.push_back("token_salto_linea");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
-		syntacticError(array);
-	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::E(){
-		cout << "funcion E currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "E\n";
 	if(currentTokenType == "id"){
 		parametro();
 		F();
@@ -851,9 +787,13 @@ void Syntactic::E(){
 		array.push_back(")");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::F(){
-		cout << "funcion F currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "F\n";
 	if(currentTokenType == "token_coma"){
 		match("token_coma");
 		parametro();
@@ -865,9 +805,13 @@ void Syntactic::F(){
 		array.push_back(")");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::importar(){
-		cout << "funcion importar currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "importar\n";
 	if(currentTokenType == "importar"){
 		match("importar");
 		match("id");
@@ -883,39 +827,24 @@ void Syntactic::importar(){
 		array.push_back("desde");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::K(){
-		cout << "funcion K currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "K\n";
 	if(currentTokenType == "token_point"){
 		match("token_point");
 		match("id");
 		K();
-	}else if(currentTokenType == "token_par_izq" || currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der"){
+	}else if(currentTokenType == "token_par_izq" || currentTokenType == "token_assign" || currentTokenType == "token_salto_linea" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "token_cor_der"){
 	}else{
 		vector<string> array;
 		array.push_back(".");
 		array.push_back("(");
-		array.push_back(")");
 		array.push_back("=");
 		array.push_back("token_salto_linea");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
 		array.push_back("}");
 		array.push_back("end");
 		array.push_back("NULL");
@@ -933,111 +862,58 @@ void Syntactic::K(){
 		array.push_back("!=");
 		array.push_back("&&");
 		array.push_back("||");
+		array.push_back(")");
 		array.push_back(",");
+		array.push_back("{");
 		array.push_back("]");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::retornar(){
-		cout << "funcion retornar currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "retornar\n";
 	if(currentTokenType == "retorno"){
 		match("retorno");
 		match("token_par_izq");
 		expr();
 		match("token_par_der");
-		ENTER();
+		match("token_salto_linea");
 	}else{
 		vector<string> array;
 		array.push_back("retorno");
 		syntacticError(array);
 	}
-}
-void Syntactic::condition_block(){
-		cout << "funcion condition_block currentToken " << currentToken << endl;
-	if(currentTokenType == "token_not" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id"){
-		expr();
-		condition_block1();
-		stat_block();
-	}else{
-		vector<string> array;
-		array.push_back("!");
-		array.push_back("(");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("id");
-		syntacticError(array);
-	}
-}
-void Syntactic::condition_block1(){
-		cout << "funcion condition_block1 currentToken " << currentToken << endl;
-	if(currentTokenType == "token_salto_linea"){
-		ENTER();
-	}else if(currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
-	}else{
-		vector<string> array;
-		array.push_back("token_salto_linea");
-		array.push_back("{");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
-		syntacticError(array);
-	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::stat_block(){
-		cout << "funcion stat_block currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "stat_block\n";
 	if(currentTokenType == "token_llave_izq"){
 		match("token_llave_izq");
-		Z();
+		stats();
 		match("token_llave_der");
-	}else if(currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion"){
+	}else if(currentTokenType == "token_salto_linea"){
+		match("token_salto_linea");
 		stat();
-		ENTER();
+		match("token_salto_linea");
 	}else{
 		vector<string> array;
 		array.push_back("{");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
+		array.push_back("token_salto_linea");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::array(){
-		cout << "funcion array currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "array\n";
 	if(currentTokenType == "token_cor_izq"){
 		match("token_cor_izq");
 		G();
@@ -1047,9 +923,13 @@ void Syntactic::array(){
 		array.push_back("[");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::objeto(){
-		cout << "funcion objeto currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "objeto\n";
 	if(currentTokenType == "token_llave_izq"){
 		match("token_llave_izq");
 		L();
@@ -1059,9 +939,13 @@ void Syntactic::objeto(){
 		array.push_back("{");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::L(){
-		cout << "funcion L currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "L\n";
 	if(currentTokenType == "id"){
 		Keyvalue();
 		M();
@@ -1072,9 +956,13 @@ void Syntactic::L(){
 		array.push_back("}");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::M(){
-		cout << "funcion M currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "M\n";
 	if(currentTokenType == "token_coma"){
 		match("token_coma");
 		Keyvalue();
@@ -1086,9 +974,13 @@ void Syntactic::M(){
 		array.push_back("}");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::Keyvalue(){
-		cout << "funcion Keyvalue currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "Keyvalue\n";
 	if(currentTokenType == "id"){
 		match("id");
 		match("token_dosp");
@@ -1098,9 +990,13 @@ void Syntactic::Keyvalue(){
 		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::G(){
-		cout << "funcion G currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "G\n";
 	if(currentTokenType == "token_not" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id"){
 		expr();
 		H();
@@ -1122,9 +1018,13 @@ void Syntactic::G(){
 		array.push_back("]");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::H(){
-		cout << "funcion H currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "H\n";
 	if(currentTokenType == "token_coma"){
 		match("token_coma");
 		expr();
@@ -1137,9 +1037,13 @@ void Syntactic::H(){
 		array.push_back("]");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::variable(){
-		cout << "funcion variable currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "variable\n";
 	if(currentTokenType == "id"){
 		match("id");
 		K();
@@ -1149,16 +1053,19 @@ void Syntactic::variable(){
 		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::variable1(){
-		cout << "funcion variable1 currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "variable1\n";
 	if(currentTokenType == "token_par_izq"){
 		J();
-	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("(");
-		array.push_back(")");
 		array.push_back("=");
 		array.push_back("^");
 		array.push_back("*");
@@ -1174,25 +1081,9 @@ void Syntactic::variable1(){
 		array.push_back("!=");
 		array.push_back("&&");
 		array.push_back("||");
+		array.push_back(")");
 		array.push_back(",");
 		array.push_back("{");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
 		array.push_back("token_salto_linea");
 		array.push_back("]");
 		array.push_back("}");
@@ -1200,18 +1091,21 @@ void Syntactic::variable1(){
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::J(){
-		cout << "funcion J currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "J\n";
 	if(currentTokenType == "token_par_izq"){
 		match("token_par_izq");
 		G();
 		match("token_par_der");
-	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_assign" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("(");
-		array.push_back(")");
 		array.push_back("=");
 		array.push_back("^");
 		array.push_back("*");
@@ -1227,25 +1121,9 @@ void Syntactic::J(){
 		array.push_back("!=");
 		array.push_back("&&");
 		array.push_back("||");
+		array.push_back(")");
 		array.push_back(",");
 		array.push_back("{");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
 		array.push_back("token_salto_linea");
 		array.push_back("]");
 		array.push_back("}");
@@ -1253,9 +1131,13 @@ void Syntactic::J(){
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::parametro(){
-		cout << "funcion parametro currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "parametro\n";
 	if(currentTokenType == "id"){
 		match("id");
 		parametro1();
@@ -1264,9 +1146,13 @@ void Syntactic::parametro(){
 		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::parametro1(){
-		cout << "funcion parametro1 currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "parametro1\n";
 	if(currentTokenType == "token_assign"){
 		match("token_assign");
 		expr();
@@ -1278,9 +1164,13 @@ void Syntactic::parametro1(){
 		array.push_back(")");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::expr(){
-		cout << "funcion expr currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "expr\n";
 	if(currentTokenType == "token_not"){
 		match("token_not");
 		expr();
@@ -1306,13 +1196,17 @@ void Syntactic::expr(){
 		array.push_back("id");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::op(){
-		cout << "funcion op currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "op\n";
 	if(currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or"){
 		N();
 		expr();
-	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_llave_izq" || currentTokenType == "token_salto_linea" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("^");
@@ -1332,23 +1226,6 @@ void Syntactic::op(){
 		array.push_back(")");
 		array.push_back(",");
 		array.push_back("{");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
 		array.push_back("token_salto_linea");
 		array.push_back("]");
 		array.push_back("}");
@@ -1356,9 +1233,13 @@ void Syntactic::op(){
 		array.push_back("NULL");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::N(){
-		cout << "funcion N currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "N\n";
 	if(currentTokenType == "token_pot"){
 		match("token_pot");
 	}else if(currentTokenType == "token_mul"){
@@ -1405,9 +1286,13 @@ void Syntactic::N(){
 		array.push_back("||");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
 void Syntactic::atom(){
-		cout << "funcion atom currentToken " << currentToken << endl;
+	level++;
+	printAsterisks();
+	cout << "atom\n";
 	if(currentTokenType == "token_integer"){
 		match("token_integer");
 	}else if(currentTokenType == "token_float"){
@@ -1439,52 +1324,17 @@ void Syntactic::atom(){
 		array.push_back("{");
 		syntacticError(array);
 	}
+	printAsterisks();
+cout << endl;	level--;
 }
-void Syntactic::ENTER(){
-		cout << "funcion ENTER currentToken " << currentToken << endl;
-	if(currentTokenType == "token_salto_linea"){
-		match("token_salto_linea");
-		NEWLINE();
-	}else{
-		vector<string> array;
-		array.push_back("token_salto_linea");
-		syntacticError(array);
-	}
-}
-void Syntactic::NEWLINE(){
-		cout << "funcion NEWLINE currentToken " << currentToken << endl;
-	if(currentTokenType == "token_salto_linea"){
-		ENTER();
-	}else if(currentTokenType == "token_salto_linea" || currentTokenType == "id" || currentTokenType == "leer" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "if" || currentTokenType == "for" || currentTokenType == "while" || currentTokenType == "funcion" || currentTokenType == "token_par_der" || currentTokenType == "token_llave_der" || currentTokenType == "end" || currentTokenType == "NULL"){
-	}else{
-		vector<string> array;
-		array.push_back("token_salto_linea");
-		array.push_back("token_salto_linea");
-		array.push_back("id");
-		array.push_back("leer");
-		array.push_back("retorno");
-		array.push_back("log");
-		array.push_back("token_integer");
-		array.push_back("token_float");
-		array.push_back("true");
-		array.push_back("false");
-		array.push_back("token_string");
-		array.push_back("nil");
-		array.push_back("[");
-		array.push_back("{");
-		array.push_back("importar");
-		array.push_back("desde");
-		array.push_back("if");
-		array.push_back("for");
-		array.push_back("while");
-		array.push_back("funcion");
-		array.push_back(")");
-		array.push_back("}");
-		array.push_back("end");
-		array.push_back("NULL");
-		syntacticError(array);
-	}
-}
+
+
+
+
+
+
+
+
 
 
 

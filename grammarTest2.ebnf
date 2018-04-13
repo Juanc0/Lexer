@@ -1,9 +1,9 @@
 program -> stats | EPSILON
 stats -> stat stats1 | EPSILON
-stats1 -> NEWLINE stats | EPSILON
+stats1 -> token_salto_linea stats | EPSILON
 A -> stat A | EPSILON
-B -> NEWLINE B | EPSILON
-stat -> simple_stat | compound_stat | NEWLINE
+B -> token_salto_linea B | EPSILON
+stat -> simple_stat | compound_stat | token_salto_linea
 compound_stat -> if_stat | while_stat | for_stat | funcion
 simple_stat -> assignment | log | importar | retornar | atom
 assignment -> variable '=' assignment1
@@ -19,10 +19,10 @@ E -> parametro F | EPSILON
 F -> ',' parametro F | EPSILON
 importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
 K -> '.' 'id' K | EPSILON
-retornar -> 'retorno' '(' expr ')' NEWLINE
+retornar -> 'retorno' '(' expr ')' token_salto_linea
 condition_block -> expr condition_block1 stat_block
-condition_block1 -> NEWLINE | EPSILON
-stat_block -> '{' Z '}' | stat NEWLINE
+condition_block1 -> token_salto_linea | EPSILON
+stat_block -> '{' Z '}' | stat token_salto_linea
 array -> 'OKEY' G 'CKEY'
 objeto -> '{' L '}'
 L -> Keyvalue M | EPSILON
