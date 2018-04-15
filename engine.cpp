@@ -40,7 +40,7 @@ class Grammar{
 		void generateSyntactic();
 };
 Grammar::Grammar(string ifname, string ofname)
-	:ifs("grammarTest2.g4"), ofs("syntactic.cpp"){
+	:ifs("grammar.g4"), ofs("syntactic.cpp"){
 	string prevVariable = "", currVariable, line, lineaux, lineRules, linePred;
 	int i;
 	vector<vector<string> > aux11;
@@ -568,7 +568,7 @@ void Grammar::generateSyntactic(){
 	}
 }
 int main(){
-	Grammar* G = new Grammar("grammarTest2.g4", "syntactic.cpp");
+	Grammar* G = new Grammar("grammar.g4", "syntactic.cpp");
 	G->printRules();
 	G->printPred();
 	// string lexeme, comp;

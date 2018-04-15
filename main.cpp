@@ -1344,7 +1344,7 @@ cout << endl;	level--;
 int main(){
 
 	// cout << "main" << endl;
-		Syntactic* S = new Syntactic(true, "program-example.txt");
+		Syntactic* S = new Syntactic(true, "input.txt");
 		delete S;
     // Lexer* lexer = new Lexer(false, "program-example.txt");
 		//

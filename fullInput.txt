@@ -1,3 +1,0 @@
-1	from_input : stat '\n'	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion'
-2	A : stat A	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '', 'retorno', 'if', 'for', 'while', 'funcion'
-3	A : EPSILON	'}', 'end'

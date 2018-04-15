@@ -1,77 +1,84 @@
-/* Statements */
-
-program					:		n statements2 n
-
-statements			:		n '{' n statements2 n '}' enter | enter statement enter
-statements2			:		statement statements3 | 'epsilon'
-statements3			:		enter statements2 | 'epsilon'
-statement				:		element | routine
-
-element					:		element2 | assignment
-element1				:		number | boolean | negation | functioncall | genoperation | fulloperation
-element2				:		element1 | 'token_string' | array | espoperation | 'nil'
-
-routine					:		_if | _while | _for | function | log | leer | importar
-
-/* Operations */
-
-genoperation		:		genoperation1 | '(' genoperation1 ')'
-genoperation1		:		element1 genoperator element1
-genoperator			:		'+' | '-' | '*' | '/' | '^' | '<' | '>' | '>=' | '<='
-
-fulloperation		:		fulloperation1 | '(' fulloperation1 ')'
-fulloperation1	:		element2 fulloperator element2
-fulloperator		:		'==' | '!=' | '&&' | '||'
-
-espoperation		:		espoperator espoperation1 | '(' espoperator espoperation1 ')'
-espoperation1		:		'+' espoperation2 | '*' element1
-espoperation2		:		espoperator | 'id'
-espoperator			:		'token_string' | array
-
-/* If, for and While */
-
-_for						:		'for' 'id' 'in' forparam statements
-forparam				:		espoperator | espoperation | functioncall
-_while					:		'while' condition statements
-_if							:		'if' condition statements _else
-_else						:		'else' statements | 'epsilon'
-condition				:		element2 | '(' condition1 ')'
-condition1			:		condition | 'epsilon'
-
-/* log, leer and importar */
-
-log							:		'log' '(' element2 ')'
-leer						:		'leer' '(' 'id' ')'
-importar				: 	'importar' importar1 | 'desde' importar1 'importar' 'id'
-importar1				:  	'id' importar2
-importar2				:  	'.' importar1 | 'epsilon'
-
-/* Function and Function_call */
-
-functioncall		:		'id' cparameters
-cparameters			:		'(' cparameters1 ')' | 'epsilon'
-cparameters1		:		element2 cparameters2
-cparameters2		:		',' cparameters1 | 'epsilon'
-
-function				:		'funcion' 'id' '(' parameters ')' functionstm 'end' 'funcion'
-parameters			:		parameters1 | 'epsilon'
-parameters1			:		'id' parameters2
-parameters2			:		',' parameters1 | 'epsilon'
-
-functionstm			:		enter statements2 functionstm1
-functionstm1		:		'retorno' returnstm enter functionstm | 'epsilon'
-returnstm				:		element2 | 'epsilon'
-
-/* Terminal Symbols and Tokens */
-
-negation				:		'!' element1
-assignment			:		'id' '=' element2
-array						:		'[' array2 ']'
-array2					:		element2 array3
-array3					:		',' array2 | 'epsilon'
-
-number					:		'token_integer' | 'token_float'
-boolean					:		'true' | 'false'
-
-enter						:		'\n' n
-n								:		enter | 'epsilon'
+1	program : stats	'token_salto_linea', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'retorno', 'if', 'for', 'while', 'funcion'
+2	program : EPSILON	'NULL'
+3	stats : stat stats1	'token_salto_linea', 'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'retorno', 'if', 'for', 'while', 'funcion'
+4	stats : EPSILON	'}', 'end', 'NULL'
+5	stats1 : 'token_salto_linea' stats	'token_salto_linea'
+6	stats1 : EPSILON	'}', 'end', 'NULL'
+7	stat : simple_stat	'id', 'importar', 'desde', 'log', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'retorno'
+8	stat : compound_stat	'if', 'for', 'while', 'funcion'
+9	stat : 'token_salto_linea'	'token_salto_linea'
+10	compound_stat : if_stat	'if'
+11	compound_stat : while_stat	'while'
+12	compound_stat : for_stat	'for'
+13	compound_stat : funcion	'funcion'
+14	simple_stat : assignment	'id'
+15	simple_stat : log	'log'
+16	simple_stat : importar	'importar', 'desde'
+17	simple_stat : retornar	'retorno'
+18	simple_stat : atom	'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'id'
+19	assignment : variable '=' expr	'id'
+20	if_stat : 'if' '(' expr ')' stat_block C	'if'
+21	C : 'else' stat_block	'else'
+22	C : EPSILON	'token_salto_linea', '}', 'end', 'NULL'
+23	while_stat : 'while' '(' expr ')' stat_block	'while'
+24	for_stat : 'for' 'id' 'in' expr stat_block	'for'
+25	log : 'log' '(' expr ')'	'log'
+26	funcion : 'funcion' 'id' '(' E ')' stats 'end' 'funcion'	'funcion'
+27	E : parametro F	'id'
+28	E : EPSILON	')'
+29	F : ',' parametro F	','
+30	F : EPSILON	')'
+31	importar : 'importar' 'id' K	'importar'
+32	importar : 'desde' 'id' 'importar' 'id'	'desde'
+33	K : '.' 'id' K	'.'
+34	K : EPSILON	'(', '=', 'token_salto_linea', '}', 'end', 'NULL', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', ')', ',', '{', ']'
+35	retornar : 'retorno' '(' expr ')' 'token_salto_linea'	'retorno'
+36	stat_block : '{' stats '}'	'{'
+37	stat_block : 'token_salto_linea' stat 'token_salto_linea'	'token_salto_linea'
+38	array : '[' G ']'	'['
+39	objeto : '{' L '}'	'{'
+40	L : Keyvalue M	'id'
+41	L : EPSILON	'}'
+42	M : ',' Keyvalue M	','
+43	M : EPSILON	'}'
+44	Keyvalue : 'id' ':' expr	'id'
+45	G : expr H	'!', '(', 'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'id'
+46	G : EPSILON	')', ']'
+47	H : ',' expr H	','
+48	H : EPSILON	')', ']'
+49	variable : 'id' K variable1	'id'
+50	variable1 : J	'('
+51	variable1 : EPSILON	'=', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', ')', ',', '{', 'token_salto_linea', ']', '}', 'end', 'NULL'
+52	J : '(' G ')'	'('
+53	J : EPSILON	'=', '^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||', ')', ',', '{', 'token_salto_linea', ']', '}', 'end', 'NULL'
+54	parametro : 'id' parametro1	'id'
+55	parametro1 : '=' expr	'='
+56	parametro1 : EPSILON	',', ')'
+57	expr : '!' expr	'!'
+58	expr : '(' expr ')'	'('
+59	expr : atom op	'token_integer', 'token_float', 'true', 'false', 'token_string', 'nil', '[', '{', 'id'
+60	op : N expr	'^', '*', '/', '%', '+', '-', '<=', '>=', '<', '>', '==', '!=', '&&', '||'
+61	op : EPSILON	')', ',', '{', 'token_salto_linea', ']', '}', 'end', 'NULL'
+62	N : '^'	'^'
+63	N : '*'	'*'
+64	N : '/'	'/'
+65	N : '%'	'%'
+66	N : '+'	'+'
+67	N : '-'	'-'
+68	N : '<='	'<='
+69	N : '>='	'>='
+70	N : '<'	'<'
+71	N : '>'	'>'
+72	N : '=='	'=='
+73	N : '!='	'!='
+74	N : '&&'	'&&'
+75	N : '||'	'||'
+76	atom : 'token_integer'	'token_integer'
+77	atom : 'token_float'	'token_float'
+78	atom : 'true'	'true'
+79	atom : 'false'	'false'
+80	atom : 'token_string'	'token_string'
+81	atom : array	'['
+82	atom : variable	'id'
+83	atom : 'nil'	'nil'
+84	atom : objeto	'{'

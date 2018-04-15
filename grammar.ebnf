@@ -1,49 +1,41 @@
-program					=		n,statements2,n;
-statements			=		n,"{",n,statements2,n,"}",enter|enter,statement,enter;
-statements2 		=		statement,statements3|"epsilon";
-statements3			=		enter,statements2|"epsilon";
-statement				=		element|routine;
-element					=		element2|assignment;
-element1				=		number|boolean|"id"|negation|functioncall|genoperation;
-element2				=		element1|"token_string"|array|espoperation|"nil";
-routine					=		_if|_while|_for|function|log|leer|importar;
-genoperation		=		genoperation1|"(",genoperation1,")";
-genoperation1	  =		element1,genoperator,element1|element2,fulloperator,element2;
-fulloperator    =   "=="|"!="|"&&"|"||";
-genoperator		  =		"+"|"-"|"*"|"/"|"^"|"<"|">"|">="|"<=";
-espoperation		=		espoperator,espoperation1|"(",espoperator,espoperation1,")";
-espoperation1	  =		"+",espoperation2|"*",element1;
-espoperation2	  =		espoperator|"id";
-espoperator		  =		"token_string"|array;
-_for						=		"for","id","in",forparam,statements;
-forparam				=		espoperator|espoperation|"id"|functioncall;
-_while					=		"while",condition,statements;
-_if							=		"if",condition,statements,_else;
-_else						=		"else",statements|"epsilon";
-condition				=		element2|"(",condition1,")";
-condition1			=		condition|"epsilon";
-log							=		"log","(",element2,")";
-leer						=		"leer","(","id",")";
-importar				= 	"importar",importar1|"desde",importar1,"importar","id";
-importar1				=  	"id",importar2;
-importar2				=  	".",importar1|"epsilon";
-functioncall		=		"id","(",cparameters,")";
-cparameters		  =		cparameters1|"epsilon";
-cparameters1		=		element2,cparameters2;
-cparameters2		=		",",cparameters1|"epsilon";
-function				=		"funcion","id","(",parameters,")",functionstm,"end","funcion";
-parameters			=		parameters1|"epsilon";
-parameters1			=		"id",parameters2;
-parameters2			=		",",parameters1|"epsilon";
-functionstm		  =		enter,statements2,functionstm1;
-functionstm1		=		"retorno",returnstm,enter,functionstm|"epsilon";
-returnstm			  =		element2|"epsilon";
-negation				=		"!",element1;
-assignment			=		"id","=",element2;
-array						=		"[",array2,"]";
-array2					=		element2,array3;
-array3					=		",",array2|"epsilon";
-number  				=		"token_integer"|"token_float";
-boolean					=		"true"|"false";
-enter						=		"/n",n;
-n								=		enter|"epsilon";
+program -> stats | EPSILON
+stats -> stat stats1 | EPSILON
+stats1 -> token_salto_linea stats | EPSILON
+A -> stat A | EPSILON
+B -> token_salto_linea B | EPSILON
+stat -> simple_stat | compound_stat | token_salto_linea
+compound_stat -> if_stat | while_stat | for_stat | funcion
+simple_stat -> assignment | log | importar | retornar | atom
+assignment -> variable '=' assignment1
+assignment1 -> assignment | expr
+if_stat -> 'if' '(' condition_block ')' C
+C -> 'else' stat_block | EPSILON
+while_stat -> 'while' expr stat_block
+for_stat -> 'for' 'id' 'in' expr stat_block
+log -> 'log' '(' expr ')'
+funcion -> 'funcion' 'id' '(' E ')' Z 'end' 'funcion'
+Z -> B | A
+E -> parametro F | EPSILON
+F -> ',' parametro F | EPSILON
+importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
+K -> '.' 'id' K | EPSILON
+retornar -> 'retorno' '(' expr ')' token_salto_linea
+condition_block -> expr condition_block1 stat_block
+condition_block1 -> token_salto_linea | EPSILON
+stat_block -> '{' Z '}' | stat token_salto_linea
+array -> 'OKEY' G 'CKEY'
+objeto -> '{' L '}'
+L -> Keyvalue M | EPSILON
+M -> ',' Keyvalue M | EPSILON
+Keyvalue -> 'id' ':' expr
+G -> expr H | EPSILON
+H -> ',' expr H | EPSILON
+variable -> 'id' K variable1
+variable1 -> J | EPSILON
+J -> '(' G ')' | EPSILON
+parametro -> 'id' parametro1
+parametro1 -> '=' expr | EPSILON
+expr -> '!' expr | '(' expr ')' | atom op
+op -> N expr | EPSILON
+N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
+atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | array | variable | 'nil' | objeto
