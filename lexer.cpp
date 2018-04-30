@@ -252,8 +252,8 @@ Lexer::Lexer(bool _useFile, string str)
 	//	Throw a lexical error for non-closed strings (readin from console)
 	dfa[14][0] = 0;
 	//	For waited word alert the end of line reading from file
-	dfa[10][13] = indexFirstFinalState+2;
-	dfa[11][13] = indexFirstFinalState+3;
+	// dfa[10][13] = indexFirstFinalState+2;
+	// dfa[11][13] = indexFirstFinalState+3;
 }
 Lexer::~Lexer(){
 	ifs.close();
@@ -282,20 +282,17 @@ Token* Lexer::nextToken(){
 	if(row == 0){
 		// if(input.eof()) return NULL;
 		getline(input, currentLine);
-		currentLineUsefulLength = currentLine.length() - useFile;
 		row = 1;
-	}if(column == currentLineUsefulLength){
+	}if(column == currentLine.length()){
 		column++;
 		return new Token(row, column, "token_salto_linea", "\n");
-	}else if(column == currentLineUsefulLength+1){
+	}else if(column == currentLine.length()+1){
 		if(input.eof()) return NULL;
 		getline(input, currentLine);
-
-		currentLineUsefulLength = currentLine.length() - useFile;
 		row++;
 		column = 0;
 	}
-	// cout << column << " " << currentLine.length() << currentLineUsefulLength << endl;
+	// cout << column << " " << currentLine.length() << currentLine.length() << endl;
 
 
 	//	find next token
@@ -339,7 +336,6 @@ Token* Lexer::nextToken(){
 
 					Token* token = new Token(row, column+1, tokenType, lexeme);
 					getline(input, currentLine);
-					currentLineUsefulLength = currentLine.length() - useFile;
 					row++;
 					column = 0;
 					i=0;
@@ -370,7 +366,7 @@ Token* Lexer::nextToken(){
 		Token* token = new Token(row, column+1, tokenType, lexeme);
 		column += i+1;
 		currentState = 0;
-		// if(lexeme == "")return nextToken();
+		if(lexeme == "")return nextToken();
 		return token;
 	}
 }

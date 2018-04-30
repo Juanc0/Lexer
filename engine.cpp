@@ -591,8 +591,8 @@ void Grammar::generateSyntactic(){
 
 int main(){
 	Grammar* G = new Grammar("grammar.g4", "syntactic.cpp");
-	G->printRules();
-	G->printPred();
+	// G->printRules();
+	// G->printPred();
 
 	// string lexeme, comp;
 	// bool tokenExist;
