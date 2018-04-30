@@ -459,16 +459,16 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tvoid match(string waitedToken);\n";
 	ofs << "\t\tvoid syntacticError(vector<string> &v);\n";
 	for(int i=0; i<variables.size(); i++){
-		ofs << "\t\tvoid " << variables[i] << "();\n";
+		ofs << "\t\tstring " << variables[i] << "();\n";
 	}
 	ofs << "};\n";
 	ofs << "Syntactic::Syntactic(bool useFile, string str){\n";
 	ofs << "\tlexer = new Lexer(useFile, str);\n";
 	ofs << "\tcurrentToken = lexer->nextToken();\n";
-	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
+	// ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\tlevel=0;\n";
-	ofs << "\tprogram();\n";
+	ofs << "\tcout << program();\n";
 	ofs << "}\n";
 	ofs << "Syntactic::~Syntactic(){\n";
 	ofs << "\tdelete lexer;\n";
@@ -479,14 +479,14 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tcout << '*';\n";
 	ofs << "}\n";
 	ofs << "void Syntactic::match(string waitedTokenType){\n";
-	ofs << "\tcout << \"match function, curreentTokenType: (\" << currentTokenType << \"), waitedTokenType: (\" << waitedTokenType << \")\\n\";\n";
+	// ofs << "\tcout << \"match function, curreentTokenType: (\" << currentTokenType << \"), waitedTokenType: (\" << waitedTokenType << \")\\n\";\n";
 	ofs << "\tif(currentTokenType == waitedTokenType){\n";
 	ofs << "\t\tcurrentToken = lexer->nextToken();\n";
 	ofs << "\t\tif(currentToken == NULL){\n";
 	ofs << "\t\t\tcout << \"El analisis sintactico ha finalizado correctamente.\";\n";
 	ofs << "\t\t\texit(-1);\n";
 	ofs << "\t\t}\n";
-	ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
+	// ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
 	ofs << "\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t}else{\n";
 	ofs << "\t\tvector<string> array;\n";
@@ -511,10 +511,11 @@ void Grammar::generateSyntactic(){
 	for(int i=0; i<variables.size(); i++){
 		// cout << "\ni" << i << endl;
 		// cout << "index2 debug" << endl;
-		ofs << "void Syntactic::" << variables[i] << "(){\n\t";
+		ofs << "string Syntactic::" << variables[i] << "(){\n\t";
+		ofs << "string aux = \"\";\n\t";
 		ofs << "level++;\n";
-		ofs << "\tprintAsterisks();\n";
-		ofs << "\tcout << \"" << variables[i] << "\\n\";\n\t";
+		// ofs << "\tprintAsterisks();\n";
+		// ofs << "\tcout << \"" << variables[i] << "\\n\";\n\t";
 		// cout << "void Syntactic::" << variables[i] << "(){\n\t";
 		for(int j=0; j<rules[i].size(); j++){
 			// cout << "========== j " << j << " ====== rules[i].size() " << rules[i].size() << "===== pred[i].size() " << pred[i].size() << endl;
@@ -542,7 +543,7 @@ void Grammar::generateSyntactic(){
 				isNonTerminal = nonTerminals.find(lexeme) != nonTerminals.end();
 				// cout <<  lexeme << "\t" << isNonTerminal << endl;
 				if(isNonTerminal){
-					ofs << "\t\t" << lexeme << "();\n";
+					ofs << "\t\taux += " << lexeme << "();\n";
 					// cout << "\t\t" << lexeme << "();\n";
 				}else{
 					if(lexeme[0] == '\'')
@@ -550,8 +551,10 @@ void Grammar::generateSyntactic(){
 					tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 					comp = tokenExist? tokenTypes[lexeme] : lexeme;
 					// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
-					if(comp != "EPSILON")
+					if(comp != "EPSILON") {
+						ofs << "\t\taux += \"" << comp << "\";\n";
 						ofs << "\t\tmatch(\"" << comp << "\");\n";
+					}
 						// cout << "\t\tmatch(\"" << comp << "\");\n";
 				}
 			}
@@ -574,9 +577,10 @@ void Grammar::generateSyntactic(){
 		// cout << "};\n";
 		ofs << "\t\tsyntacticError(array);\n";
 		ofs << "\t}\n";
-		ofs << "\tprintAsterisks();\n";
-		ofs << "\tcout << endl;\n";
+		// ofs << "\tprintAsterisks();\n";
+		// ofs << "\tcout << endl;\n";
 		ofs << "\tlevel--;\n";
+		ofs << "\treturn aux;\n";
 		ofs << "}\n";
 		// cout << "}\n";
 	}
