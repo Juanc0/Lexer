@@ -10,7 +10,12 @@ log -> 'log' '(' expr ')'
 leer -> 'leer' '(' variable ')'
 importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
 
-funcion -> 'funcion' 'id' '(' parametros ')' stat_block 'end' 'funcion'
+funcion -> 'funcion' 'id' '(' parametros ')' funcion_block 'end' 'funcion'
+funcion_block -> '{' funcion_stats '}' | A funcion_stat A
+funcion_stats -> B funcion_stat funcion_stats1 | EPSILON
+funcion_stats1 -> A funcion_stats | EPSILON
+funcion_stat -> stat | retorno_block
+retorno_block -> 'retorno' '(' expr ')' | EPSILON
 parametros -> 'id' parametro | EPSILON
 parametro -> ',' 'id' parametro | EPSILON
 

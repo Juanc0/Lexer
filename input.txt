@@ -1,4 +1,5 @@
-funcion hola(nombre)
-  log ("Hola " + nombre + " :D")
+funcion suma(a,b)
+  retorno(a+b)
 end funcion
-hola("nombre")
+log("Prueba de suma")
+log(suma(1,2))

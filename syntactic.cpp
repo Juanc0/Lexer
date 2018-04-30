@@ -396,6 +396,9 @@ class Syntactic{
 		void leer();
 		void importar();
 		void funcion();
+		void funcion_block();
+		void funcion_block1();
+		void retorno_block();
 		void parametros();
 		void parametro();
 		void A();
@@ -500,7 +503,7 @@ void Syntactic::stats(){
 		B();
 		stat();
 		stats1();
-	}else if(currentTokenType == "token_llave_der" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_llave_der" || currentTokenType == "retorno" || currentTokenType == "token_salto_linea" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("token_salto_linea");
@@ -522,6 +525,25 @@ void Syntactic::stats(){
 		array.push_back("id");
 		array.push_back("funcion");
 		array.push_back("}");
+		array.push_back("retorno");
+		array.push_back("token_salto_linea");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("-");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
@@ -536,11 +558,30 @@ void Syntactic::stats1(){
 	if(currentTokenType == "token_salto_linea"){
 		A();
 		stats();
-	}else if(currentTokenType == "token_llave_der" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_llave_der" || currentTokenType == "retorno" || currentTokenType == "token_salto_linea" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("token_salto_linea");
 		array.push_back("}");
+		array.push_back("retorno");
+		array.push_back("token_salto_linea");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("-");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
@@ -701,12 +742,111 @@ void Syntactic::funcion(){
 		match("token_par_izq");
 		parametros();
 		match("token_par_der");
-		stat_block();
+		funcion_block();
 		match("end");
 		match("funcion");
 	}else{
 		vector<string> array;
 		array.push_back("funcion");
+		syntacticError(array);
+	}
+	printAsterisks();
+	cout << endl;
+	level--;
+}
+void Syntactic::funcion_block(){
+	level++;
+	printAsterisks();
+	cout << "funcion_block\n";
+	if(currentTokenType == "token_llave_izq"){
+		match("token_llave_izq");
+		stats();
+		retorno_block();
+		stats();
+		match("token_llave_der");
+	}else if(currentTokenType == "token_salto_linea"){
+		A();
+		funcion_block1();
+		B();
+	}else{
+		vector<string> array;
+		array.push_back("{");
+		array.push_back("token_salto_linea");
+		syntacticError(array);
+	}
+	printAsterisks();
+	cout << endl;
+	level--;
+}
+void Syntactic::funcion_block1(){
+	level++;
+	printAsterisks();
+	cout << "funcion_block1\n";
+	if(currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion"){
+		stat();
+		match("token_salto_linea");
+	}else if(currentTokenType == "retorno"){
+		retorno_block();
+	}else{
+		vector<string> array;
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("-");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
+		array.push_back("retorno");
+		syntacticError(array);
+	}
+	printAsterisks();
+	cout << endl;
+	level--;
+}
+void Syntactic::retorno_block(){
+	level++;
+	printAsterisks();
+	cout << "retorno_block\n";
+	if(currentTokenType == "retorno"){
+		match("retorno");
+		match("token_par_izq");
+		expr();
+		match("token_par_der");
+		match("token_salto_linea");
+	}else if(currentTokenType == "retorno" || currentTokenType == "token_salto_linea" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "end"){
+	}else{
+		vector<string> array;
+		array.push_back("retorno");
+		array.push_back("retorno");
+		array.push_back("token_salto_linea");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("-");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
+		array.push_back("end");
 		syntacticError(array);
 	}
 	printAsterisks();
@@ -773,7 +913,7 @@ void Syntactic::B(){
 	if(currentTokenType == "token_salto_linea"){
 		match("token_salto_linea");
 		B();
-	}else if(currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "end" || currentTokenType == "token_llave_der" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "token_salto_linea" || currentTokenType == "retorno" || currentTokenType == "end" || currentTokenType == "token_llave_der" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("token_salto_linea");
@@ -795,6 +935,7 @@ void Syntactic::B(){
 		array.push_back("id");
 		array.push_back("funcion");
 		array.push_back("token_salto_linea");
+		array.push_back("retorno");
 		array.push_back("end");
 		array.push_back("}");
 		array.push_back("NULL");
@@ -902,7 +1043,7 @@ void Syntactic::K(){
 		match("token_point");
 		match("id");
 		K();
-	}else if(currentTokenType == "token_par_izq" || currentTokenType == "token_cor_izq" || currentTokenType == "token_par_der" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_assign" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_salto_linea" || currentTokenType == "token_llave_der" || currentTokenType == "NULL" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der"){
+	}else if(currentTokenType == "token_par_izq" || currentTokenType == "token_cor_izq" || currentTokenType == "token_par_der" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_assign" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_salto_linea" || currentTokenType == "oken_salto_line" || currentTokenType == "token_llave_der" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "NULL" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der"){
 	}else{
 		vector<string> array;
 		array.push_back(".");
@@ -925,7 +1066,23 @@ void Syntactic::K(){
 		array.push_back("&&");
 		array.push_back("||");
 		array.push_back("token_salto_linea");
+		array.push_back("oken_salto_line");
 		array.push_back("}");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
 		array.push_back("NULL");
 		array.push_back(",");
 		array.push_back("]");
@@ -1032,7 +1189,7 @@ void Syntactic::J(){
 		match("token_par_der");
 	}else if(currentTokenType == "token_cor_izq"){
 		array();
-	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_assign" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "token_salto_linea" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_assign" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "token_salto_linea" || currentTokenType == "oken_salto_line" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("(");
@@ -1057,6 +1214,24 @@ void Syntactic::J(){
 		array.push_back("]");
 		array.push_back("}");
 		array.push_back("token_salto_linea");
+		array.push_back("oken_salto_line");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
@@ -1108,7 +1283,7 @@ void Syntactic::op(){
 	if(currentTokenType == "token_pot" || currentTokenType == "token_mul" || currentTokenType == "token_div" || currentTokenType == "token_mod" || currentTokenType == "token_mas" || currentTokenType == "token_menos" || currentTokenType == "token_assign" || currentTokenType == "token_menor_igual" || currentTokenType == "token_mayor_igual" || currentTokenType == "token_menor" || currentTokenType == "token_mayor" || currentTokenType == "token_igual_num" || currentTokenType == "token_diff_num" || currentTokenType == "token_and" || currentTokenType == "token_or"){
 		N();
 		expr();
-	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "token_salto_linea" || currentTokenType == "NULL"){
+	}else if(currentTokenType == "token_par_der" || currentTokenType == "token_coma" || currentTokenType == "token_cor_der" || currentTokenType == "token_llave_der" || currentTokenType == "token_salto_linea" || currentTokenType == "oken_salto_line" || currentTokenType == "retorno" || currentTokenType == "log" || currentTokenType == "importar" || currentTokenType == "desde" || currentTokenType == "leer" || currentTokenType == "token_not" || currentTokenType == "token_menos" || currentTokenType == "token_par_izq" || currentTokenType == "token_integer" || currentTokenType == "token_float" || currentTokenType == "true" || currentTokenType == "false" || currentTokenType == "token_string" || currentTokenType == "nil" || currentTokenType == "token_cor_izq" || currentTokenType == "token_llave_izq" || currentTokenType == "id" || currentTokenType == "funcion" || currentTokenType == "NULL"){
 	}else{
 		vector<string> array;
 		array.push_back("^");
@@ -1131,6 +1306,25 @@ void Syntactic::op(){
 		array.push_back("]");
 		array.push_back("}");
 		array.push_back("token_salto_linea");
+		array.push_back("oken_salto_line");
+		array.push_back("retorno");
+		array.push_back("log");
+		array.push_back("importar");
+		array.push_back("desde");
+		array.push_back("leer");
+		array.push_back("!");
+		array.push_back("-");
+		array.push_back("(");
+		array.push_back("token_integer");
+		array.push_back("token_float");
+		array.push_back("true");
+		array.push_back("false");
+		array.push_back("token_string");
+		array.push_back("nil");
+		array.push_back("[");
+		array.push_back("{");
+		array.push_back("id");
+		array.push_back("funcion");
 		array.push_back("NULL");
 		syntacticError(array);
 	}
@@ -1236,7 +1430,7 @@ void Syntactic::atom(){
 }
 
 int main(){
-	Syntactic* S = new Syntactic(false, "input.txt");
+	Syntactic* S = new Syntactic(true, "input.txt");
 	delete S;
 	return 0;
 }
