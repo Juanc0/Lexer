@@ -87,6 +87,7 @@ Grammar::Grammar(string ifname, string ofname)
 			lineaux = i==-1?lineRules:lineRules.substr(0, i);
 			if(lineaux == "\'OKEY\'")lineaux = "[";
 			else if(lineaux == "\'CKEY\'")lineaux = "]";
+			else if(lineaux == "\'OR\'")lineaux = "||";
 			aux21.push_back(lineaux);
 			lineRules = i==-1?"":lineRules.substr(i+1);
 			// cout << "i " << i << "lineaux " << lineaux << "lineRules " << lineRules << "\n";
@@ -103,6 +104,7 @@ Grammar::Grammar(string ifname, string ofname)
 			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n";
 			if(lineaux == "OKEY")lineaux = "[";
 			else if(lineaux == "CKEY")lineaux = "]";
+			else if(lineaux == "OR")lineaux = "||";
 			else if(lineaux == "$")lineaux = "NULL";
 			aux22.push_back(lineaux);
 			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n";
@@ -581,7 +583,7 @@ void Grammar::generateSyntactic(){
 
 
 	ofs << "\nint main(){\n";
-	ofs << "\tSyntactic* S = new Syntactic(true, \"input.txt\");\n";
+	ofs << "\tSyntactic* S = new Syntactic(false, \"input.txt\");\n";
 	ofs << "\tdelete S;\n";
 	ofs << "\treturn 0;\n}\n";
 }

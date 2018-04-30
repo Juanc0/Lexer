@@ -370,7 +370,7 @@ Token* Lexer::nextToken(){
 		Token* token = new Token(row, column+1, tokenType, lexeme);
 		column += i+1;
 		currentState = 0;
-		if(lexeme == "")return nextToken();
+		// if(lexeme == "")return nextToken();
 		return token;
 	}
 }

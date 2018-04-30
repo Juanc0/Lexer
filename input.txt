@@ -1,1 +1,1 @@
-log("holi")
+variable = variable2
