@@ -99,7 +99,7 @@ Grammar::Grammar(string ifname, string ofname)
 		vector<string> aux22;
 		while(linePred != ""){
 			i = linePred.find(", ");
-			lineaux = i==-1?linePred.substr(1,linePred.length()-3):linePred.substr(1, i-2);
+			lineaux = i==-1?linePred.substr(1,linePred.length()-2):linePred.substr(1, i-2);
 			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n";
 			if(lineaux == "OKEY")lineaux = "[";
 			else if(lineaux == "CKEY")lineaux = "]";

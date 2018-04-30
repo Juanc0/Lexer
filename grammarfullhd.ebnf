@@ -1,0 +1,10 @@
+program -> stats | EPSILON
+stats -> stat stats1 | EPSILON
+stats1 -> token_salto_linea stats | EPSILON
+stat -> simple_stat | token_salto_linea
+simple_stat -> log | atom
+log -> 'log' '(' expr ')'
+expr -> '!' expr | '(' expr ')' | atom op
+op -> N expr | EPSILON
+N -> '^' | '*' | '/' | '%' | '+' | '-' | '<=' | '>=' | '<' | '>' | '==' | '!=' | '&&' | 'OR'
+atom -> 'token_integer' | 'token_float' | 'true' | 'false' | 'token_string' | 'nil'

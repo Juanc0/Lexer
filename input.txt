@@ -1,8 +1,1 @@
-funcion ho_asdf-la(nombre)
-  log ("Hola " + nombre + " :D")
-  12341234
-asdfasdf
-end
-"asdfasdf"
-1234124
-hola("nombre")
+log("holi")
