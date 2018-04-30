@@ -469,6 +469,7 @@ void Grammar::generateSyntactic(){
 	ofs << "\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\tlevel=0;\n";
 	ofs << "\tcout << program();\n";
+	ofs << "\tcout << \"El analisis sintactico ha finalizado correctamente.\";\n";
 	ofs << "}\n";
 	ofs << "Syntactic::~Syntactic(){\n";
 	ofs << "\tdelete lexer;\n";
@@ -483,11 +484,12 @@ void Grammar::generateSyntactic(){
 	ofs << "\tif(currentTokenType == waitedTokenType){\n";
 	ofs << "\t\tcurrentToken = lexer->nextToken();\n";
 	ofs << "\t\tif(currentToken == NULL){\n";
-	ofs << "\t\t\tcout << \"El analisis sintactico ha finalizado correctamente.\";\n";
-	ofs << "\t\t\texit(-1);\n";
+	ofs << "\t\t\tcurrentTokenType = \"NULL\";\n";
+	ofs << "\t\t\t//exit(-1);\n";
+	ofs << "\t\t}else{\n";
+	// ofs << "\t\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
+	ofs << "\t\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t\t}\n";
-	// ofs << "\t\tcout << currentToken->getLexeme() << \" \" << currentToken->getType() << endl;\n";
-	ofs << "\t\tcurrentTokenType = currentToken->getType() == \"rw\"?currentToken->getLexeme():currentToken->getType();\n";
 	ofs << "\t}else{\n";
 	ofs << "\t\tvector<string> array;\n";
 	ofs << "\t\tarray.push_back(waitedTokenType);\n";
@@ -514,8 +516,8 @@ void Grammar::generateSyntactic(){
 		ofs << "string Syntactic::" << variables[i] << "(){\n\t";
 		ofs << "string aux = \"\";\n\t";
 		ofs << "level++;\n";
-		// ofs << "\tprintAsterisks();\n";
-		// ofs << "\tcout << \"" << variables[i] << "\\n\";\n\t";
+		ofs << "\tprintAsterisks();\n";
+		ofs << "\tcout << \"" << variables[i] << "\" << currentTokenType << \"\\n\";\n\t";
 		// cout << "void Syntactic::" << variables[i] << "(){\n\t";
 		for(int j=0; j<rules[i].size(); j++){
 			// cout << "========== j " << j << " ====== rules[i].size() " << rules[i].size() << "===== pred[i].size() " << pred[i].size() << endl;
@@ -564,6 +566,7 @@ void Grammar::generateSyntactic(){
 			if(j<rules[i].size()-1)
 				ofs << " ";
 		}
+		ofs << " if(currentTokenType == \"NULL\"){\n\t}else";
 		ofs << "{\n";
 		ofs << "\t\tvector<string> array;\n";
 		// cout << "||||||||    " << variables[i] << endl;
@@ -577,8 +580,8 @@ void Grammar::generateSyntactic(){
 		// cout << "};\n";
 		ofs << "\t\tsyntacticError(array);\n";
 		ofs << "\t}\n";
-		// ofs << "\tprintAsterisks();\n";
-		// ofs << "\tcout << endl;\n";
+		ofs << "\tprintAsterisks();\n";
+		ofs << "\tcout << endl;\n";
 		ofs << "\tlevel--;\n";
 		ofs << "\treturn aux;\n";
 		ofs << "}\n";
