@@ -1,27 +1,32 @@
 program -> stats | EPSILON
 stats -> B stat stats1 | EPSILON
-stats1 -> A stats | EPSILON
+stats1 -> 'token_salto_linea' stats | EPSILON
 stat -> simple_stat | compound_stat
 
 simple_stat -> log | leer | importar | expr
-compound_stat -> funcion
+compound_stat -> funcion | while_stat | for_stat | if_stat
 
 log -> 'log' '(' expr ')'
 leer -> 'leer' '(' variable ')'
 importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
 
-funcion -> 'funcion' 'id' '(' parametros ')' funcion_block 'end' 'funcion'
-funcion_block -> '{' funcion_stats '}' | A funcion_stat A
+funcion -> 'funcion' 'id' '(' parametros ')' funcion_stats 'end' 'funcion'
 funcion_stats -> B funcion_stat funcion_stats1 | EPSILON
-funcion_stats1 -> A funcion_stats | EPSILON
+funcion_stats1 -> 'token_salto_linea' funcion_stats | EPSILON
 funcion_stat -> stat | retorno_block
 retorno_block -> 'retorno' '(' expr ')' | EPSILON
 parametros -> 'id' parametro | EPSILON
 parametro -> ',' 'id' parametro | EPSILON
 
-A -> 'token_salto_linea' B
+while_stat -> 'while' expr stat_block
+for_stat -> 'for' 'id' 'in' expr stat_block
+
+if_stat -> 'if' '(' expr ')' stat_block else_block
+else_block -> 'else' else_stats | EPSILON
+else_stats -> if_stat | stat_block
+
+stat_block -> '{' stats '}' | 'token_salto_linea' stat 'token_salto_linea'
 B -> 'token_salto_linea' B | EPSILON
-stat_block -> '{' stats '}' | A stat A
 variable -> 'id' K J
 array -> 'OKEY' G 'CKEY'
 objeto -> '{' L '}'
