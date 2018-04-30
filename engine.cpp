@@ -583,7 +583,7 @@ void Grammar::generateSyntactic(){
 
 
 	ofs << "\nint main(){\n";
-	ofs << "\tSyntactic* S = new Syntactic(false, \"input.txt\");\n";
+	ofs << "\tSyntactic* S = new Syntactic(true, \"input.txt\");\n";
 	ofs << "\tdelete S;\n";
 	ofs << "\treturn 0;\n}\n";
 }

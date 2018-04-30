@@ -1,4 +1,8 @@
-funcion hola(nombre)
-  log ("Hola " + nombre + " :D")
-end funcion
-hola("nombre")
+
+
+
+
+
+
+
+a
