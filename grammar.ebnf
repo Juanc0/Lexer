@@ -1,11 +1,22 @@
 program -> stats | EPSILON
-stats -> stat stats1 | EPSILON
-stats1 -> 'token_salto_linea' stats | EPSILON
-stat -> simple_stat | 'token_salto_linea'
-simple_stat -> log | leer | importar | expr | atom
+stats -> B stat stats1 | EPSILON
+stats1 -> A stats | EPSILON
+stat -> simple_stat | compound_stat
+
+simple_stat -> log | leer | importar | expr
+compound_stat -> funcion
+
 log -> 'log' '(' expr ')'
 leer -> 'leer' '(' variable ')'
 importar -> 'importar' 'id' K | 'desde' 'id' 'importar' 'id'
+
+funcion -> 'funcion' 'id' '(' parametros ')' stat_block 'end' 'funcion'
+parametros -> 'id' parametro | EPSILON
+parametro -> ',' 'id' parametro | EPSILON
+
+A -> 'token_salto_linea' B
+B -> 'token_salto_linea' B | EPSILON
+stat_block -> '{' stats '}' | A stat A
 variable -> 'id' K J
 array -> 'OKEY' G 'CKEY'
 objeto -> '{' L '}'
