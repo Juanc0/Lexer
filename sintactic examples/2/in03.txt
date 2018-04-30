@@ -1,0 +1,10 @@
+alumno={nombre:"joaquin",apellido:"sanchez",cedula:80}
+log(alumno.nombre)
+log(alumno.apellido)
+log(alumno.cedula)
+vec={vec1:1,vec2:4,vec3:9}
+resul=vec.vec3+vec.vec1
+log(resul)
+
+
+

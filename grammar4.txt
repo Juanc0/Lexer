@@ -1,0 +1,152 @@
+1 ~EXPRATOM  token_integer ~token_integer
+2 ~EXPRATOM  token_float ~token_float
+3 ~EXPRATOM  true ~true
+4 ~EXPRATOM  false ~false
+5 ~EXPRATOM  token_string ~token_string
+6 ~EXPRATOM  ARRAY ~[
+7 ~EXPRATOM  OBJETO ~{
+8 ~EXPRATOM  VARIABLE ~identificador
+9 ~EXPRATOM  nil ~nil
+10 ~EXPRP  - EXPR ~-
+11 ~EXPRP  EXPR ~! ( token_integer token_float true false token_string nil [ identificador {
+12 ~EXPR  EXPR2 FACTOREXPR2 ~! ( token_integer token_float true false token_string nil [ identificador {
+12 ~EXPR  EXPRP ~-
+13 ~EXPR2  ! EXPR2 ~!
+14 ~EXPR2  ( EXPRP ) ~(
+15 ~EXPR2  EXPRATOM ~token_integer token_float true false token_string nil [ identificador {
+16 ~FACTOREXPR2  * EXPR ~*
+17 ~FACTOREXPR2  / EXPR ~/
+18 ~FACTOREXPR2  % EXPR ~%
+19 ~FACTOREXPR2  + EXPR ~+
+20 ~FACTOREXPR2  - EXPR ~-
+21 ~FACTOREXPR2  >= EXPR ~>=
+22 ~FACTOREXPR2  <= EXPR ~<=
+23 ~FACTOREXPR2  > EXPR ~>
+24 ~FACTOREXPR2  < EXPR ~<
+25 ~FACTOREXPR2  == EXPR ~==
+26 ~FACTOREXPR2  != EXPR ~!=
+27 ~FACTOREXPR2  && EXPR ~&&
+28 ~FACTOREXPR2  || EXPR ~||
+29 ~FACTOREXPR2  ^ EXPR ~^
+30 ~FACTOREXPR2  EPSILON ~, ! ( token_integer token_float true false token_string nil [ identificador { ] ) importar desde log leer retorno if for while funcion \n : } $ end
+31 ~FUN_STATEMENT  funcion identificador ( AUXILIARP ) AUXILIARF end funcion ~funcion
+32 ~AUXILIARP  PARAM FACTORAUXILIARP ~identificador
+33 ~AUXILIARP  EPSILON ~)
+34 ~PARAM  identificador FACTORPARAM ~identificador
+35 ~FACTORAUXILIARP  , AUXILIARP ~,
+36 ~FACTORAUXILIARP  EPSILON ~)
+37 ~FACTORPARAM  = EXPR ~=
+38 ~FACTORPARAM  EPSILON ~, )
+39 ~AUXILIARF  \n AUXILIARF ~\n
+40 ~AUXILIARF  STATEMENT AUXILIARF ~identificador importar desde log leer retorno token_integer token_float true false token_string nil [ { if for while funcion
+41 ~AUXILIARF  EPSILON ~end }
+42 ~ARRAY  [ INTARRAY ] ~[
+43 ~INTARRAY  EXPR INTARRAYP ~! ( token_integer token_float true false token_string nil [ identificador {
+44 ~INTARRAY  EPSILON ~]
+45 ~INTARRAYP  INTARRAY1 ~, ]
+46 ~INTARRAYP  INTARRAY2 ~:
+47 ~INTARRAY1  , EXPR INTARRAY1 ~,
+48 ~INTARRAY1  EPSILON ~]
+49 ~INTARRAY2  : INTARRAY3 ~:
+50 ~INTARRAY3  EXPR INTARRAY3P ~! ( token_integer token_float true false token_string nil [ identificador {
+51 ~INTARRAY3P  : EXPR ~:
+52 ~INTARRAY3P  EPSILON ~]
+53 ~INITIAL  FFILE ~- \n $ identificador importar desde log leer retorno token_integer token_float true false token_string nil [ { if for while funcion
+54 ~FFILE  STATEMENT FFILE ~- identificador importar desde log leer retorno token_integer token_float true false token_string nil [ { if for while funcion
+55 ~FFILE  \n FFILE ~\n
+56 ~FFILE  $ ~$
+57 ~STATEMENT  SIMPLE_STATEMENT ~- identificador importar desde log leer retorno token_integer token_float true false token_string nil [ {
+58 ~STATEMENT  COMP_STATEMENT ~if for while funcion
+59 ~COMP_STATEMENT  IF_STATEMENT ~if
+60 ~COMP_STATEMENT  WHILE_STATEMENT ~while
+61 ~COMP_STATEMENT  FOR_STATEMENT ~for
+62 ~COMP_STATEMENT  FUN_STATEMENT ~funcion
+63 ~EXPRATOM3  token_integer ~token_integer
+64 ~EXPRATOM3  token_float ~token_float
+65 ~EXPRATOM3  true ~true
+66 ~EXPRATOM3  false ~false
+67 ~EXPRATOM3  token_string ~token_string
+68 ~EXPRATOM3  ARRAY ~[
+69 ~EXPRATOM3  OBJETO ~{
+70 ~EXPRATOM3  nil ~nil
+71 ~SIMPLE_STATEMENT  ASSIG2 ~identificador
+72 ~SIMPLE_STATEMENT  LOG ~log
+72 ~SIMPLE_STATEMENT  LEER ~leer
+73 ~SIMPLE_STATEMENT  IMPORTAR ~importar desde
+74 ~SIMPLE_STATEMENT  RETORNAR ~retorno
+75 ~SIMPLE_STATEMENT  EXPRATOM3 SIMPLE_STATEMENTP ~token_integer token_float true false token_string nil [ {
+76 ~SIMPLE_STATEMENT  - EXPR SIMPLE_STATEMENTP ~-
+77 ~ASSIG  VARIABLE = ASSIGP ~identificador
+78 ~ASSIGP  EXPR ~! ( token_integer token_float true false token_string nil [ identificador {
+79 ~ASSIG2  VARIABLE ASSIG2P ~identificador
+80 ~ASSIG2P  = EXPR ~=
+81 ~ASSIG2P  ( AUXILIARV ) ~(
+81 ~ASSIG2P  EPSILON ~\n $ identificador importar desde log retorno token_integer token_float true false token_string nil [ { if for while funcion end }
+82 ~ASSIG3  identificador ASSIG3P ~identificador
+83 ~ASSIG3P  = EXPR ~=
+84 ~ASSIG3P  EPSILON ~\n
+85 ~IF_STATEMENT  if CONDITION ELSE_STATEMENT ~if
+86 ~ELSE_STATEMENT  else_if CONDITION ELSE_STATEMENT ~else_if
+87 ~ELSE_STATEMENT  else STATEMENT_BLOCK ~else
+85 ~ELSE_STATEMENT  \n ELSE_STATEMENT ~\n
+88 ~ELSE_STATEMENT  EPSILON ~$ identificador importar desde log retorno token_integer token_float true false token_string nil [ { if for while funcion } end
+88 ~CONDITION  ( EXPR ) CONDITIONP ~(
+89 ~CONDITIONP  STATEMENT_BLOCK ~{ identificador importar desde log token_integer token_float true false token_string nil [ retorno if for while funcion
+90 ~CONDITIONP  \n STATEMENT_BLOCK ~\n
+91 ~STATEMENT_BLOCK  STATEMENT2 \n ~identificador importar desde log token_integer token_float true false token_string nil [ retorno if for while funcion
+92 ~STATEMENT_BLOCK  { STATEMENT_BLOCKP } ~{
+92 ~STATEMENT_BLOCK  \n STATEMENT_BLOCK ~\n
+93 ~STATEMENT_BLOCKP  EPSILON ~}
+94 ~STATEMENT_BLOCKP  AUXILIARF ~\n identificador importar desde log retorno token_integer token_float true false token_string nil [ { if for while funcion
+95 ~STATEMENT2  SIMPLE_STATEMENT2 ~identificador importar desde log token_integer token_float true false token_string nil [ retorno
+96 ~STATEMENT2  COMP_STATEMENT ~if for while funcion
+97 ~SIMPLE_STATEMENT2  ASSIG2 ~identificador
+98 ~SIMPLE_STATEMENT2  LOG ~log
+99 ~SIMPLE_STATEMENT2  IMPORTAR ~importar desde
+100 ~SIMPLE_STATEMENT2  RETORNAR ~retorno
+101 ~SIMPLE_STATEMENT2  EXPRATOM2 \n ~token_integer token_float true false token_string nil [
+103 ~SIMPLE_STATEMENTP  \n ~\n
+16 ~SIMPLE_STATEMENTP  * FACTOREXPR2 ~*
+17 ~SIMPLE_STATEMENTP  / FACTOREXPR2 ~/
+18 ~SIMPLE_STATEMENTP  % FACTOREXPR2 ~%
+19 ~SIMPLE_STATEMENTP  + FACTOREXPR2 ~+
+20 ~SIMPLE_STATEMENTP  - FACTOREXPR2 ~-
+21 ~SIMPLE_STATEMENTP  >= FACTOREXPR2 ~>=
+22 ~SIMPLE_STATEMENTP  <= FACTOREXPR2 ~<=
+23 ~SIMPLE_STATEMENTP  > FACTOREXPR2 ~>
+24 ~SIMPLE_STATEMENTP  < FACTOREXPR2 ~<
+25 ~SIMPLE_STATEMENTP  == FACTOREXPR2 ~==
+26 ~SIMPLE_STATEMENTP  != FACTOREXPR2 ~!=
+27 ~SIMPLE_STATEMENTP  && FACTOREXPR2 ~&&
+28 ~SIMPLE_STATEMENTP  || FACTOREXPR2 ~||
+29 ~SIMPLE_STATEMENTP  ^ FACTOREXPR2 ~^
+103 ~EXPRATOM2  token_integer ~token_integer
+104 ~EXPRATOM2  token_float ~token_float
+105 ~EXPRATOM2  true ~true
+106 ~EXPRATOM2  false ~false
+107 ~EXPRATOM2  token_string ~token_string
+108 ~EXPRATOM2  ARRAY ~[
+109 ~EXPRATOM2  nil ~nil
+110 ~WHILE_STATEMENT  while EXPR STATEMENT_BLOCK ~while
+111 ~FOR_STATEMENT  for identificador in EXPR STATEMENT_BLOCK ~for
+112 ~OBJETO  { AUXILIARO } ~{
+113 ~AUXILIARO  KEYVALUE AUXILIARO ~identificador
+114 ~AUXILIARO  , KEYVALUE AUXILIARO ~,
+115 ~AUXILIARO  EPSILON ~}
+116 ~VARIABLE  identificador AUXILIARIP ~identificador
+117 ~AUXILIARIP  ( AUXILIARV ) ~(
+118 ~AUXILIARIP  AUXILIARI ~. [ ) $ = * / % + - >= <= < > == != && || , ^ ! ( token_integer token_float true false token_string nil { identificador ] : \n funcion log leer importar desde retorno if while for end }
+119 ~AUXILIARI  . identificador AUXILIARI ~.
+120 ~AUXILIARI  [ AUXILIARV ] ~[
+121 ~AUXILIARI  EPSILON ~ = $ * / % + - >= <= > < == != && || ^ \n identificador importar desde log leer retorno token_integer token_float true false token_string nil { if for while funcion end } , ! ( ] ) :
+122 ~IMPORTAR  importar identificador AUXILIARI ~importar
+123 ~IMPORTAR  desde identificador importar identificador ~desde
+124 ~LOG  log ( EXPR ) ~log
+125 ~LEER  leer ( EXPR ) ~leer
+125 ~RETORNAR  retorno ( EXPR ) \n ~retorno
+126 ~ACCESSARRAY  id [ EXPR ] ~identificador
+127 ~AUXILIARV  EXPR AUXILIARVP ~! ( token_integer token_float true false token_string nil [ identificador { * / % + - >= <= > < == != && || ^ ,
+128 ~AUXILIARV  EPSILON ~ ) ]
+128 ~AUXILIARVP  , EXPR AUXILIARVP ~,
+129 ~AUXILIARVP  EPSILON ~) ]
+130 ~KEYVALUE  identificador : EXPR ~identificador

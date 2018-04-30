@@ -1,0 +1,19 @@
+acceso[7,7]= 5
+log(4)
+log( "prueba de impresion" )
+leer( num )
+log( num )
+leer( cadena )
+log( cadena )
+log(5+6>6.8*(4-7))
+leer(hola)
+leer(h[5])
+leer(d567)
+while (5==0) {
+a=a+6}
+while (5!=0)
+      a=a+6
+for x in step {
+log(x)
+}
+

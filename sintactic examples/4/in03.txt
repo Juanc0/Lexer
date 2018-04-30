@@ -1,0 +1,28 @@
+#retorno (7)
+5.5 <= 2
+3*0
+0.9/5.5
+-5 + 8
+{hola:4}
+{A:5.7, key:"cadena"}
+arreglo[9]
+hola
+id1.id2.id3.id4
+if (fsdf) {
+}
+else {}
+
+if (5+4>(6.6/3))
+    b=a*0
+else if (5) 
+	log(1)
+else {
+    varias[9*4] = 0
+    
+}
+if (a){ a=0 }
+if ( a>0 ) {
+log("Mayor")
+} else {
+log("Menor o igual")
+}

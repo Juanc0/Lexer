@@ -1,4 +1,8 @@
-funcion hola(nombre)
+funcion ho_asdf-la(nombre)
   log ("Hola " + nombre + " :D")
-end funcion
+  12341234
+asdfasdf
+end
+"asdfasdf"
+1234124
 hola("nombre")

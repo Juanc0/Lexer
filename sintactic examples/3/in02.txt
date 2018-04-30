@@ -1,0 +1,6 @@
+funcion suma(a,b)
+  retorno(a+b)
+end funcion
+
+log("Prueba de suma")
+log(suma(1,2))

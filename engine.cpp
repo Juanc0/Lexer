@@ -17,7 +17,7 @@ class Grammar{
 		vector<vector<vector<string> > > rules;
 		vector<vector<vector<string> > > pred;
 		vector<vector<string> > first;
-    unordered_map<string, string> tokenTypes;
+		unordered_map<string, string> tokenTypes;
 		unordered_set<string> nonTerminals;
 		ifstream ifs;
 		ofstream ofs;
@@ -85,28 +85,31 @@ Grammar::Grammar(string ifname, string ofname)
 		while(lineRules != ""){
 			i = lineRules.find(' ');
 			lineaux = i==-1?lineRules:lineRules.substr(0, i);
+			if(lineaux == "\'OKEY\'")lineaux = "[";
+			else if(lineaux == "\'CKEY\'")lineaux = "]";
 			aux21.push_back(lineaux);
 			lineRules = i==-1?"":lineRules.substr(i+1);
 			// cout << "i " << i << "lineaux " << lineaux << "lineRules " << lineRules << "\n";
 		}
-		cout << endl;
-		printVector(aux21);
+		// cout << endl;
+		// printVector(aux21);
 		aux11.push_back(aux21);
 
 
 		vector<string> aux22;
 		while(linePred != ""){
 			i = linePred.find(", ");
-			lineaux = i==-1?linePred:linePred.substr(0, i);
-			lineaux = lineaux.substr(1,lineaux.length()-2);
+			lineaux = i==-1?linePred.substr(1,linePred.length()-3):linePred.substr(1, i-2);
+			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n";
 			if(lineaux == "OKEY")lineaux = "[";
-			if(lineaux == "CKEY")lineaux = "]";
-			if(lineaux == "$")lineaux = "NULL";
+			else if(lineaux == "CKEY")lineaux = "]";
+			else if(lineaux == "$")lineaux = "NULL";
 			aux22.push_back(lineaux);
+			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n";
 			linePred = i==-1?"":linePred.substr(i+2);
-			// cout << "i " << i << "lineaux " << lineaux << "linePred " << linePred << "\n";
+			// cout << "i (" << i << ")\tlineaux (" << lineaux << ")\tlinePred (" << linePred << ")\n\n";
 		}
-		printVector(aux22);
+		// printVector(aux22);
 		aux12.push_back(aux22);
 		// cout << "\t\t SIZE() AUX11 AUX12 " << aux11.size() << aux12.size() << endl;
 	}
@@ -430,6 +433,18 @@ void Grammar::generateFirsts(){
 	}
 }
 void Grammar::generateSyntactic(){
+
+	ifstream lexer("lexer.cpp");
+	string auxStr = "";
+	int mainIndexString = 0;
+	while(true){
+		getline(lexer, auxStr);
+		if((mainIndexString = auxStr.find("main")) != -1)break;
+		ofs << auxStr << '\n';
+	}
+	lexer.close();
+
+
 	ofs << "class Syntactic{\n";
 	ofs << "\tpublic:\n";
 	ofs << "\t\tLexer* lexer;\n";
@@ -485,7 +500,7 @@ void Grammar::generateSyntactic(){
 	ofs << "\t\tcout << \", \" << v[i];\n";
 	ofs << "\tcout << \"}\";\n";
 	ofs << "\texit(-1);\n";
-	ofs << "}\n";
+	ofs << "}\n\n";
 
 	string lexeme, comp;
 	bool tokenExist, isNonTerminal;
@@ -502,17 +517,14 @@ void Grammar::generateSyntactic(){
 		for(int j=0; j<rules[i].size(); j++){
 			// cout << "========== j " << j << " ====== rules[i].size() " << rules[i].size() << "===== pred[i].size() " << pred[i].size() << endl;
 			ofs << "if(";
-			cout << "if(\n";
+			// cout << "if(\n";
 			for(int k=0; k<pred[i][j].size(); k++){
 				// cout << "~~~~~~~~~ k " << k << " ~~~~~~~~~ pred[i][j].size() " << pred[i][j].size() << endl;
 				lexeme = pred[i][j][k];
 				tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 				comp = tokenExist? tokenTypes[lexeme] : lexeme;
-				cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
-				// if(comp == "NULL")
-				// 	ofs << "currentTokenType == " << comp;
-				// else
-					ofs << "currentTokenType == \"" << comp << "\"";
+				// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
+				ofs << "currentTokenType == \"" << comp << "\"";
 				// cout << "currentTokenType == \"" << comp << "\"";
 				if(k<pred[i][j].size()-1){
 					ofs << " || ";
@@ -520,7 +532,7 @@ void Grammar::generateSyntactic(){
 				}
 			}
 			ofs << "){\n";
-			cout << "){\n";
+			// cout << "){\n";
 		// 	// for(int m=0; m<rules[i][j].size(); m++){
 		// 		// cout << "i " << i << " m " << m << " " << rules[i][j][m] << endl;
 			for(int k=0; k<rules[i][j].size(); k++){
@@ -535,7 +547,7 @@ void Grammar::generateSyntactic(){
 						lexeme = lexeme.substr(1, lexeme.length()-2);
 					tokenExist = tokenTypes.find(lexeme) != tokenTypes.end();
 					comp = tokenExist? tokenTypes[lexeme] : lexeme;
-					cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
+					// cout << "(" << lexeme << ")\t" << tokenExist << "\t" << comp << endl;
 					if(comp != "EPSILON")
 						ofs << "\t\tmatch(\"" << comp << "\");\n";
 						// cout << "\t\tmatch(\"" << comp << "\");\n";
@@ -561,16 +573,25 @@ void Grammar::generateSyntactic(){
 		ofs << "\t\tsyntacticError(array);\n";
 		ofs << "\t}\n";
 		ofs << "\tprintAsterisks();\n";
-		ofs << "\ncout << endl;";
+		ofs << "\tcout << endl;\n";
 		ofs << "\tlevel--;\n";
 		ofs << "}\n";
 		// cout << "}\n";
 	}
+
+
+	ofs << "\nint main(){\n";
+	ofs << "\tSyntactic* S = new Syntactic(true, \"input.txt\");\n";
+	ofs << "\tdelete S;\n";
+	ofs << "\treturn 0;\n}\n";
 }
+
+
 int main(){
 	Grammar* G = new Grammar("grammar.g4", "syntactic.cpp");
-	G->printRules();
-	G->printPred();
+	// G->printRules();
+	// G->printPred();
+
 	// string lexeme, comp;
 	// bool tokenExist;
 	//

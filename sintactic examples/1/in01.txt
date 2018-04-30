@@ -1,0 +1,3 @@
+a=12
+x= 1.2
+string="hola mundo"

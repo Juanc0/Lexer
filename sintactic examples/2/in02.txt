@@ -1,0 +1,37 @@
+for i in [1,2,3]{
+ log("hola " + i)
+}
+
+for i in [1,2,3]{
+log("Ahora i vale " + i)
+}
+for i in [1,2,3]{
+ log("Ahora i vale " + i + " y su cuadrado es " + i*i)
+}
+
+for i in ["ANA", "Juan", 80]{
+ log("El valor de la variable i es " + i)
+ }
+
+ for numero in [0,1,2,3]
+   log(numero + " X " + numero + " = "+ numero * numero)
+
+for i in ["A","M","I","G","O"]{
+log("Dame una " + i)
+}
+cont=0
+for i in [1,2,3,4,5,6]{
+ if (i % 2 == 0){
+ cont=cont+1     
+ }
+}
+log(cont)
+
+suma = 0
+for i in [1,2,3,4]{
+ suma = suma + i
+ }
+log("La suma de los numeros de 1 a 4 es " + suma)
+
+
+

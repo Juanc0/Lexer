@@ -1,0 +1,7 @@
+to do list
+
+-5 (new state, rewrite -, edit nextToken funtion to retorn + and stay if next (...) is a "number")
+Rename main.cpp to sintacticEngine.cpp
+Read and write lexer in syntactic without the main
+Copy sintacticEngine and rename the copy to semanticEngine
+Edit the semanticEngine to reconize the copy of the grammar with the new code
